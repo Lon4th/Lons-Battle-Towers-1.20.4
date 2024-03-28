@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "lonsbattletowers",
+	"version": "${version}",
+	"name": "Lon's Battle Towers",
+	"description": "",
+	"authors": [
+		"Lon4th"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": ""
+	},
+	"license": "MIT",
+	"icon": "assets/lonsbattletowers/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.eps.lonsbattletowers.LonsBattleTowers"
+		],
+		"client": [
+			"net.eps.lonsbattletowers.LonsBattleTowersClient"
+		],
+		"fabric-datagen": [
+			"net.eps.lonsbattletowers.LonsBattleTowersDataGenerator"
+		]
+	},
+	"mixins": [
+		"lonsbattletowers.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.7",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
