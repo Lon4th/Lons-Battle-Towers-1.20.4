@@ -77,17 +77,6 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     private static final TrackedData<Integer> ANIMATION_RESET = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 
-    /*public static final TrackedData<Float> HEAD_YAW = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.FLOAT);
-    public static final TrackedData<Float> HEAD_PITCH = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.FLOAT);
-    public static final TrackedData<Float> HEAD_ROLL = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.FLOAT);
-    public static final TrackedData<Float> LEGS_YAW = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.FLOAT);
-    public static final TrackedData<Float> LEGS_PITCH = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.FLOAT);
-    public static final TrackedData<Float> LEGS_ROLL = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.FLOAT);
-
-    public static final TrackedData<Boolean> MIMIC_ROTATION_FIXED = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.BOOLEAN);*/
-    //private static final TrackedData<Integer> JUMP_STATE = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.INTEGER);
-
-
     private boolean targetChange = false;
     private boolean allowGoalsInit = true;
 
@@ -311,28 +300,6 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
             this.spawnAnimationState.start(this.age);
             setSpawnAnimation(false);
         }
-
-
-
-
-        /*if (this.dataTracker.get(JUMP_STATE) == 1 && jumpAnimationCooldown <= 0) {
-            System.out.println("JUMP STATE " + 1);
-            this.jumpAnimationCooldown = 18;
-            this.jumpAnimationStartState.start(this.age);
-            this.dataTracker.set(JUMP_STATE, 0);
-
-        } else {
-            --this.jumpAnimationCooldown;
-        }
-
-        if (this.dataTracker.get(JUMP_STATE) == 2 && jumpAnimationCooldown <= 0) {
-            System.out.println("JUMP STATE " + 2);
-            this.jumpAnimationStartState.stop();
-            this.dataTracker.set(JUMP_STATE, 0);
-
-        } else {
-            --this.jumpAnimationCooldown;
-        }*/
     }
 
     private void updateBreakAnimation() {
@@ -393,25 +360,6 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
             return false;
         }
         if (this.isDead()) {
-            return false;
-        }
-
-        /*if (source.isOf(DamageTypes.TRIDENT)) {
-            System.out.println("JUMP STATE should be " + 1);
-            this.dataTracker.set(JUMP_STATE, 1);
-            return false;
-        } else if (source.isOf(DamageTypes.ARROW)) {
-            System.out.println("JUMP STATE should be " + 2);
-            this.jumpAnimationStartState.stop();
-            //this.dataTracker.set(JUMP_STATE, 2);
-            return false;
-        } else if (source.isOf(DamageTypes.PLAYER_ATTACK)) {
-            System.out.println("JUMP STATE should be " + 0);
-            this.dataTracker.set(JUMP_STATE, 0);
-        }*/
-        if (source.isOf(DamageTypes.TRIDENT)) {
-            System.out.println("JUMP STATE should be " + 1);
-            this.setSpawnAnimation(true);
             return false;
         }
 
@@ -598,15 +546,6 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
         this.dataTracker.startTracking(BREAK, false);
         this.dataTracker.startTracking(TOP_OPEN, false);
         this.dataTracker.startTracking(SPAWN, false);
-
-        /*this.dataTracker.startTracking(MIMIC_ROTATION_FIXED, false);
-        this.dataTracker.startTracking(HEAD_YAW, 0f);
-        this.dataTracker.startTracking(HEAD_PITCH, 0f);
-        this.dataTracker.startTracking(HEAD_ROLL, 0f);
-        this.dataTracker.startTracking(LEGS_YAW, 0f);
-        this.dataTracker.startTracking(LEGS_PITCH, 0f);
-        this.dataTracker.startTracking(LEGS_ROLL, 0f);*/
-        //this.dataTracker.startTracking(JUMP_STATE, 0);
     }
 
     public static DefaultAttributeContainer.Builder createTowerMimicAttributes() {

@@ -96,7 +96,6 @@ public class TowerMimicModel<T extends TowerMimicEntity> extends SinglePartEntit
 	@Override
 	public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
 		int overlayUv = entityAlive ? overlay : OverlayTexture.DEFAULT_UV;
-		//vertexConsumer.texture(-16, 96).light(-16, 96);
 		Body.render(matrices, vertexConsumer, light, overlayUv, red, green, blue, alpha);
 	}
 
