@@ -1,0 +1,117 @@
+{
+  "credit": "Made with Blockbench",
+
+  "parent": "lonsbattletowers:block/template_tower_vault",
+  "texture_size": [32, 32],
+  "textures": {
+    "6": "lonsbattletowers:block/tower_vault_barrel_top",
+    "7": "lonsbattletowers:block/tower_vault_barrel_bottom",
+    "8": "lonsbattletowers:block/tower_vault_barrel_side",
+
+    "front": "lonsbattletowers:block/tower_vault_front_active",
+    "bottom": "lonsbattletowers:block/tower_vault_bottom",
+    "top": "lonsbattletowers:block/tower_vault_top_unlocking",
+    "side": "lonsbattletowers:block/tower_vault_side",
+
+    "particle": "lonsbattletowers:block/tower_vault_side"
+  },
+  "elements": [
+    {
+      "name": "tower_vault_cage",
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#front", "cullface": "north"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "east"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "south"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "west"},
+        "up": {"uv": [16, 0, 0, 16], "texture": "#top", "cullface": "up"},
+        "down": {"uv": [16, 0, 0, 16], "texture": "#bottom"}
+      }
+    },
+    {
+      "name": "cage_inverted_faces",
+      "from": [16, 2.980, 0],
+      "to": [0, 16.020, 16],
+      "faces": {
+        "north": {"uv": [16, 0, 0, 13], "texture": "#front"},
+        "east": {"uv": [16, 0, 0, 13], "texture": "#side"},
+        "south": {"uv": [16, 0, 0, 13], "texture": "#side"},
+        "west": {"uv": [16, 0, 0, 13], "texture": "#side"},
+        "up": {"uv": [16, 0, 0, 16], "texture": "#top"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#bottom"}
+      }
+    },
+    {
+      "name": "tower_vault_barrel",
+      "from": [1, 4, 1],
+      "to": [15, 15, 15],
+      "rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+      "faces": {
+        "north": {"uv": [1, 3, 15, 14], "texture": "#8"},
+        "east": {"uv": [1, 3, 15, 14], "texture": "#8"},
+        "south": {"uv": [1, 3, 15, 14], "texture": "#8"},
+        "west": {"uv": [1, 3, 15, 14], "texture": "#8"},
+        "up": {"uv": [15, 15, 1, 1], "texture": "#6"},
+        "down": {"uv": [15, 1, 1, 15], "texture": "#7"}
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [75, 45, 0],
+      "translation": [0, 2.5, 0],
+      "scale": [0.375, 0.375, 0.375]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [75, 45, 0],
+      "translation": [0, 2.5, 0],
+      "scale": [0.375, 0.375, 0.375]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, 45, 0],
+      "scale": [0.4, 0.4, 0.4]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 225, 0],
+      "scale": [0.4, 0.4, 0.4]
+    },
+    "ground": {
+      "translation": [0, 3, 0],
+      "scale": [0.25, 0.25, 0.25]
+    },
+    "gui": {
+      "rotation": [-145.75, 45, -180],
+      "translation": [0, 0, 3.25],
+      "scale": [0.62, 0.6, 0.62]
+    },
+    "head": {
+      "scale": [0.95, 0.95, 0.95]
+    },
+    "fixed": {
+      "scale": [0.5, 0.5, 0.5]
+    }
+  },
+  "groups": [
+    {
+      "name": "Vault",
+      "origin": [0, 0, 0],
+      "color": 0,
+      "children": [
+        {
+          "name": "Cage",
+          "origin": [0, 0, 0],
+          "color": 0,
+          "children": [0]
+        },
+        {
+          "name": "Barrel",
+          "origin": [0, 0, 0],
+          "color": 0,
+          "children": [1]
+        }
+      ]
+    }
+  ]
+}

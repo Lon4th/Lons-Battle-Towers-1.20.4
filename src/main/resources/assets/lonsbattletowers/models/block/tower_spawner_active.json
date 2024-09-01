@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top_inner_faces",
+  "textures": {
+    "bottom": "lonsbattletowers:block/tower_spawner_top_active",
+    "side": "lonsbattletowers:block/tower_spawner_side_active",
+    "top": "lonsbattletowers:block/tower_spawner_top_active"
+  }
+}

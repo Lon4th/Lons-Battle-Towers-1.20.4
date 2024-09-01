@@ -59,6 +59,10 @@ java {
 	targetCompatibility = JavaVersion.VERSION_17
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/lonsbattletowers.accesswidener")
+}
+
 jar {
 	from("LICENSE") {
 		rename { "${it}_${project.base.archivesName.get()}"}

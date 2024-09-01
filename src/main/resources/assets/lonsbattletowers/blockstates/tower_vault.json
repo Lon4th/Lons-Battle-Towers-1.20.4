@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=east,tower_vault_state=active": {
+      "model": "lonsbattletowers:block/tower_vault_on",
+      "y": 90
+    },
+    "facing=east,tower_vault_state=ejecting": {
+      "model": "lonsbattletowers:block/tower_vault_ejecting_reward",
+      "y": 90
+    },
+    "facing=east,tower_vault_state=inactive": {
+      "model": "lonsbattletowers:block/tower_vault",
+      "y": 90
+    },
+    "facing=east,tower_vault_state=unlocking": {
+      "model": "lonsbattletowers:block/tower_vault_unlocking",
+      "y": 90
+    },
+    "facing=north,tower_vault_state=active": {
+      "model": "lonsbattletowers:block/tower_vault_on"
+    },
+    "facing=north,tower_vault_state=ejecting": {
+      "model": "lonsbattletowers:block/tower_vault_ejecting_reward"
+    },
+    "facing=north,tower_vault_state=inactive": {
+      "model": "lonsbattletowers:block/tower_vault"
+    },
+    "facing=north,tower_vault_state=unlocking": {
+      "model": "lonsbattletowers:block/tower_vault_unlocking"
+    },
+    "facing=south,tower_vault_state=active": {
+      "model": "lonsbattletowers:block/tower_vault_on",
+      "y": 180
+    },
+    "facing=south,tower_vault_state=ejecting": {
+      "model": "lonsbattletowers:block/tower_vault_ejecting_reward",
+      "y": 180
+    },
+    "facing=south,tower_vault_state=inactive": {
+      "model": "lonsbattletowers:block/tower_vault",
+      "y": 180
+    },
+    "facing=south,tower_vault_state=unlocking": {
+      "model": "lonsbattletowers:block/tower_vault_unlocking",
+      "y": 180
+    },
+    "facing=west,tower_vault_state=active": {
+      "model": "lonsbattletowers:block/tower_vault_on",
+      "y": 270
+    },
+    "facing=west,tower_vault_state=ejecting": {
+      "model": "lonsbattletowers:block/tower_vault_ejecting_reward",
+      "y": 270
+    },
+    "facing=west,tower_vault_state=inactive": {
+      "model": "lonsbattletowers:block/tower_vault",
+      "y": 270
+    },
+    "facing=west,tower_vault_state=unlocking": {
+      "model": "lonsbattletowers:block/tower_vault_unlocking",
+      "y": 270
+    }
+  }
+}

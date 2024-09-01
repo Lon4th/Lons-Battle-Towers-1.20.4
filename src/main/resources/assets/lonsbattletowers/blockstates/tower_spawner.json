@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "tower_spawner_state=active": {
+      "model": "lonsbattletowers:block/tower_spawner_active"
+    },
+    "tower_spawner_state=inactive": {
+      "model": "lonsbattletowers:block/tower_spawner_inactive"
+    },
+    "tower_spawner_state=waiting_for_players": {
+      "model": "lonsbattletowers:block/tower_spawner_inactive"
+    },
+    "tower_spawner_state=activating": {
+      "model": "lonsbattletowers:block/tower_spawner_active"
+    }
+  }
+}
