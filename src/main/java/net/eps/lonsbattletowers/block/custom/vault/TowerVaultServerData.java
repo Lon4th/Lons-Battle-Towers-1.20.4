@@ -1,6 +1,7 @@
 package net.eps.lonsbattletowers.block.custom.vault;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -10,17 +11,22 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Uuids;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static net.minecraft.util.Uuids.INT_STREAM_CODEC;
+
 public class TowerVaultServerData {
     static final String SERVER_DATA_KEY = "server_data";
+    public static final Codec<Set<UUID>> SET_CODEC = Codec.list(Uuids.INT_STREAM_CODEC).xmap(Sets::newHashSet, Lists::newArrayList);
     public static Codec<TowerVaultServerData> codec = RecordCodecBuilder.create(
             instance -> instance.group(
-                            Uuids.SET_CODEC.optionalFieldOf("rewarded_players", Sets.newHashSet()).forGetter(data -> data.rewardedPlayers),
+                            SET_CODEC.optionalFieldOf("rewarded_players", Sets.newHashSet()).forGetter(data -> data.rewardedPlayers),
                             Codec.LONG.optionalFieldOf("state_updating_resumes_at", 0L).forGetter(data -> data.stateUpdatingResumesAt),
                             ItemStack.CODEC.listOf().optionalFieldOf("items_to_eject", List.of()).forGetter(data -> data.itemsToEject),
-                            Codec.INT.optionalFieldOf("total_ejections_needed", 0).forGetter(data -> data.totalEjectionsNeeded)
+                            Codec.INT.optionalFieldOf("total_ejections_needed", 0).forGetter(data -> data.totalEjectionsNeeded),
+                            Codec.STRING.optionalFieldOf("spawned_mimic_target", "null").forGetter(data -> data.spawnedMimicTarget)
                     )
                     .apply(instance, TowerVaultServerData::new)
     );
@@ -30,13 +36,15 @@ public class TowerVaultServerData {
     private final List<ItemStack> itemsToEject = new ObjectArrayList<>();
     private long lastFailedUnlockTime;
     private int totalEjectionsNeeded;
+    private String spawnedMimicTarget = "null";
     public boolean dirty;
 
-    TowerVaultServerData(Set<UUID> rewardedPlayers, long stateUpdatingResumesAt, List<ItemStack> itemsToEject, int totalEjectionsNeeded) {
+    TowerVaultServerData(Set<UUID> rewardedPlayers, long stateUpdatingResumesAt, List<ItemStack> itemsToEject, int totalEjectionsNeeded, String spawnedMimicTarget) {
         this.rewardedPlayers.addAll(rewardedPlayers);
         this.stateUpdatingResumesAt = stateUpdatingResumesAt;
         this.itemsToEject.addAll(itemsToEject);
         this.totalEjectionsNeeded = totalEjectionsNeeded;
+        this.spawnedMimicTarget = spawnedMimicTarget;
     }
 
     public TowerVaultServerData() {
@@ -112,12 +120,28 @@ public class TowerVaultServerData {
         }
     }
 
+    @Nullable
+    public String getSpawnedMimicTarget() {
+        return this.spawnedMimicTarget;
+    }
+
+    public void setSpawnedMimicTarget(String spawnedMimicTarget) {
+        if (spawnedMimicTarget == null) {
+            this.spawnedMimicTarget = "null";
+            return;
+        }
+        this.spawnedMimicTarget = spawnedMimicTarget;
+    }
+
+
+
     public void copyFrom(TowerVaultServerData data) {
         this.stateUpdatingResumesAt = data.getStateUpdatingResumeTime();
         this.itemsToEject.clear();
         this.itemsToEject.addAll(data.itemsToEject);
         this.rewardedPlayers.clear();
         this.rewardedPlayers.addAll(data.rewardedPlayers);
+        this.spawnedMimicTarget = data.getSpawnedMimicTarget();
     }
 
     private void markDirty() {

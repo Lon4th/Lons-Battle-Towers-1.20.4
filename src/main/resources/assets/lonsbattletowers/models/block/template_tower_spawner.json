@@ -1,11 +1,7 @@
 {
-  "parent": "minecraft:block/cube_bottom_top_inner_faces",
+  "parent": "block/block",
   "textures": {
-    "bottom": "lonsbattletowers:block/tower_vault_bottom",
-    "side": "lonsbattletowers:block/tower_spawner_side_active",
-    "top": "lonsbattletowers:block/tower_spawner_top_active",
-
-    "particle": "lonsbattletowers:block/tower_spawner_side_active"
+    "particle": "#side"
   },
   "elements": [
     {
@@ -13,7 +9,7 @@
       "from": [0, 0, 0],
       "to": [16, 16, 16],
       "faces": {
-        "north": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "north"},
+        "north": {"uv": [0, 0, 16, 16], "texture": "#front", "cullface": "north"},
         "east": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "east"},
         "south": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "south"},
         "west": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "west"},
@@ -23,10 +19,10 @@
     },
     {
       "name": "cage_inverted_faces",
-      "from": [16, 1.975, 0],
-      "to": [0, 16, 16],
+      "from": [15.998, 3.002, 0.002],
+      "to": [0.002, 15.998, 15.998],
       "faces": {
-        "north": {"uv": [16, 0, 0, 13], "texture": "#side"},
+        "north": {"uv": [16, 0, 0, 13], "texture": "#front"},
         "east": {"uv": [16, 0, 0, 13], "texture": "#side"},
         "south": {"uv": [16, 0, 0, 13], "texture": "#side"},
         "west": {"uv": [16, 0, 0, 13], "texture": "#side"},

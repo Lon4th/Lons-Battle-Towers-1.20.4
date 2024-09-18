@@ -3,10 +3,13 @@ package net.eps.lonsbattletowers.particle.custom;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.*;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.util.math.MathHelper;
+import org.joml.Quaternionf;
 
 public class TowerSpawnerDetectionParticle extends SpriteBillboardParticle {
     private final SpriteProvider spriteProvider;
@@ -41,9 +44,14 @@ public class TowerSpawnerDetectionParticle extends SpriteBillboardParticle {
         return 240;
     }
 
+    public Rotator getRotator() {
+        return Rotator.Y_AND_W_ONLY;
+    }
+
     @Override
-    public BillboardParticle.Rotator getRotator() {
-        return BillboardParticle.Rotator.Y_AND_W_ONLY;
+    public void buildGeometry(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
+        this.getRotator().setRotation(new Quaternionf(), camera, tickDelta);
+        super.buildGeometry(vertexConsumer, camera, tickDelta);
     }
 
     @Override
@@ -69,5 +77,17 @@ public class TowerSpawnerDetectionParticle extends SpriteBillboardParticle {
         public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             return new TowerSpawnerDetectionParticle(clientWorld, d, e, f, g, h, i, 1.5f, this.spriteProvider);
         }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public interface Rotator {
+        Rotator ALL_AXIS = (quaternion, camera, tickDelta) -> {
+            quaternion.set(camera.getRotation());
+        };
+        Rotator Y_AND_W_ONLY = (quaternion, camera, tickDelta) -> {
+            quaternion.set(0.0F, camera.getRotation().y, 0.0F, camera.getRotation().w);
+        };
+
+        void setRotation(Quaternionf quaternion, Camera camera, float tickDelta);
     }
 }

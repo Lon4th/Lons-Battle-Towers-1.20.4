@@ -4,21 +4,15 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.eps.lonsbattletowers.LonsBattleTowers;
-import net.eps.lonsbattletowers.block.custom.vault.TowerVaultConfig;
+import net.eps.lonsbattletowers.entity.math.LongJumpUtil;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
-import net.minecraft.client.render.entity.feature.SkinOverlayOwner;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RangedAttackMob;
-import net.minecraft.entity.ai.brain.Memory;
-import net.minecraft.entity.ai.brain.MemoryModuleState;
-import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.brain.task.BreezeJumpTask;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -27,40 +21,30 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.IronGolemEntity;
-import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.entity.projectile.SmallFireballEntity;
-import net.minecraft.entity.raid.RaiderEntity;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Unit;
 import net.minecraft.util.Util;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldEvents;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.system.MathUtil;
 
 import java.util.*;
 
@@ -70,12 +54,14 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     private static final TrackedData<Boolean> JUMP_LAND = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private static final TrackedData<Boolean> BREAK = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private static final TrackedData<Boolean> SPAWN = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    private static final TrackedData<Boolean> TOP_OPEN = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    //private static final TrackedData<Boolean> INHALING = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    //private static final TrackedData<Boolean> TOP_OPEN = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     private static final TrackedData<Integer> SHOOTING_STATE = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Integer> LAND = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Integer> ANIMATION_RESET = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
+    private static EntityPose INHALING;
 
     private boolean targetChange = false;
     private boolean allowGoalsInit = true;
@@ -83,7 +69,8 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     private int jumpCooldown = 0;
     private final int maxJumpCooldown = 25;
 
-    private BlockPos jumpTarget = null;
+    private BlockPos jumpTarget;
+    private Direction spawnDirection;
 
     private List<ItemStack> itemsToEject = new ObjectArrayList<>();
     private long nextEjectingTime = 0;
@@ -120,18 +107,38 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
 
 
     private final TowerMimicShootGoal shootGoal = new TowerMimicShootGoal(this, 1.0, 100, 5);
-    private final TowerMimicAttackGoal attackGoal = new TowerMimicAttackGoal(this, 1.0, false);
+    private final TowerMimicAttackGoal attackGoal = new TowerMimicAttackGoal(this, 1.0, true);
 
     public TowerMimicEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
+        this.spawnAnimationState.start(this.age);
+        //if (this.getDirection() == Direction.SOUTH) {
+        //    this.setHeadYaw(0);
+        //}
+        //this.setHeadYaw(90);
+        //System.out.println("Entity Head on start Yaw: " + this.getHeadYaw());
+        this.setStepHeight(1.0F);
     }
 
     @Override
     public void tick() {
         super.tick();
 
+
+        //this.setHeadYaw(90);
+        //System.out.println("Entity Head Yaw: " + this.getHeadYaw());
+        //System.out.println("Entity Body Yaw: " + this.bodyYaw);
+        //this.refreshPositionAndAngles((double)this.getBlockPos().getX() + 0.5, (double)this.getBlockPos().getY() + 0.05, (double)this.getBlockPos().getZ() + 0.5, 0.0F, 0.0F);
+        //if (this.getDirection() == Direction.SOUTH) {
+        //    this.setHeadYaw(0);
+        //}
+        //System.out.println("Entity Head Yaw: " + this.getHeadYaw());
+
         if (this.getWorld().isClient()) {
             decreaseAnimationCooldowns();
+
+            spawnAmbientParticles(this.getWorld(), this.getPos(), this);
+            playAmbientSound(this.getWorld(), this.getPos());
 
             if (!this.isDead()) {
                 updateAliveAnimations();
@@ -141,6 +148,9 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
             }
         } else {
             updateAttackType();
+
+            //this.teleport((ServerWorld) this.getWorld(), (double)this.getBlockPos().getX() + 0.5, (double)this.getBlockPos().getY() + 0.05, (double)this.getBlockPos().getZ() + 0.5, PositionFlag.getFlags(1), 90.0F, 0.0F);
+
         }
 
         if (this.getTarget() != null) {
@@ -175,7 +185,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
                 this.setShootState(3);
                 this.dataTracker.set(ANIMATION_RESET, 1);
             }
-            if (this.getJumpAnimation() && this.getPose() != EntityPose.INHALING && this.isOnGround()) {
+            if (this.getJumpAnimation() && this.getPose() != INHALING && this.isOnGround()) {
                 this.setJumpAnimation(false);
                 this.dataTracker.set(ANIMATION_RESET, 2);
             }
@@ -209,9 +219,11 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0f, 0.02F, true));
         this.goalSelector.add(6, new LookAroundGoal(this));
 
-        this.targetSelector.add(2, new RevengeGoal(this, RaiderEntity.class).setGroupRevenge(new Class[0]));
-        this.targetSelector.add(3, new ActiveTargetGoal<PlayerEntity>(this, PlayerEntity.class, true));
-        this.targetSelector.add(3, new ActiveTargetGoal<IronGolemEntity>(this, IronGolemEntity.class, true));
+        if (this.getTarget() == null) {
+            this.targetSelector.add(3, new ActiveTargetGoal<PlayerEntity>(this, PlayerEntity.class, true));
+            this.targetSelector.add(3, new ActiveTargetGoal<IronGolemEntity>(this, IronGolemEntity.class, true));
+        }
+        this.targetSelector.add(2, new RevengeGoal(this, TowerMimicEntity.class).setGroupRevenge(new Class[0]));
     }
 
     private void clearGoals() {
@@ -296,7 +308,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
 
         /* Spawn */
         if (this.getSpawnAnimation() && spawnAnimationCooldown <= 0) {
-            this.spawnAnimationCooldown = 14;
+            this.spawnAnimationCooldown = 7;
             this.spawnAnimationState.start(this.age);
             setSpawnAnimation(false);
         }
@@ -307,11 +319,9 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
         if (this.getBreakAnimation() && breakAnimationCooldown <= 0) {
             this.breakAnimationCooldown = 14;
             this.breakAnimationState.start(this.age);
-            System.out.println("Breaking animation started");
             setBreakAnimation(false);
         }
     }
-
 
     private void disableAliveAnimations() {
         this.idleAnimationState.stop();
@@ -322,6 +332,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
         this.landAnimationState.stop();
         this.jumpAnimationStartState.stop();
         this.jumpAnimationLandState.stop();
+        this.spawnAnimationState.stop();
     }
 
     private void decreaseAnimationCooldowns() {
@@ -334,6 +345,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
         --this.jumpAnimationCooldown;
         --this.jumpAnimationLandCooldown;
         --this.breakAnimationCooldown;
+        --this.spawnAnimationCooldown;
     }
 
     public void updateAttackType() {
@@ -393,7 +405,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
             this.setVelocity(Vec3d.ZERO);
         }
 
-        //super.onDeath(damageSource);
+        super.onDeath(damageSource);
     }
 
     @Override
@@ -409,15 +421,17 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
 
         if (!this.isRemoved() && !this.itemsToEject.isEmpty()) {
 
-            if (world.getTime() >= this.nextEjectingTime && this.getTopOpen()) {
+            if (world.getTime() >= this.nextEjectingTime
+            //        && this.getTopOpen()
+            ) {
                 this.ejectItem(world, pos, this.getItemToEject(), 1.0F);
 
                 this.nextEjectingTime = world.getTime() + 20L;
-            } else if (world.getTime() >= this.nextEjectingTime) {
+            }/* else if (world.getTime() >= this.nextEjectingTime) {
                 this.setTopOpen(true);
 
                 this.nextEjectingTime = world.getTime() + 20L;
-            }
+            }*/
         }
 
         if (this.itemsToEject.isEmpty() && (world.getTime() >= this.nextEjectingTime)) {
@@ -427,7 +441,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     }
 
     private static List<ItemStack> generateLoot(ServerWorld world, Vec3d pos, PlayerEntity player) {
-        LootTable lootTable = world.getServer().getLootManager().getLootTable(new Identifier(LonsBattleTowers.MOD_ID, "chests/tower_vault"));
+        LootTable lootTable = world.getServer().getLootManager().getLootTable(new Identifier(LonsBattleTowers.MOD_ID, "chests/tower_mimic_vault"));
         LootContextParameterSet lootContextParameterSet = player != null ?
                 new LootContextParameterSet.Builder(world).add(LootContextParameters.ORIGIN, pos).luck(player.getLuck()).add(LootContextParameters.THIS_ENTITY, player).build(LootContextTypes.CHEST) :
                 new LootContextParameterSet.Builder(world).add(LootContextParameters.ORIGIN, pos).build(LootContextTypes.CHEST);
@@ -438,7 +452,35 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     private void ejectItem(ServerWorld world, Vec3d pos, ItemStack stack, float pitchModifier) {
         ItemDispenserBehavior.spawnItem(world, stack, 2, Direction.UP, pos.offset(Direction.UP, 1.2));
         //world.syncWorldEvent(/*WorldEvents.VAULT_EJECTS_ITEM*/ WorldEvents.TRIAL_SPAWNER_EJECTS_ITEM, BlockPos.ofFloored(pos), 0);
-        world.playSound(null, BlockPos.ofFloored(pos), /*SoundEvents.BLOCK_VAULT_EJECT_ITEM*/ SoundEvents.BLOCK_TRIAL_SPAWNER_EJECT_ITEM, SoundCategory.BLOCKS, 1.0F, 0.8F + 0.4F * pitchModifier);
+        world.playSound(null, BlockPos.ofFloored(pos), /*SoundEvents.BLOCK_VAULT_EJECT_ITEM*/ SoundEvents.BLOCK_DISPENSER_DISPENSE, SoundCategory.BLOCKS, 1.0F, 0.8F + 0.4F * pitchModifier);
+    }
+
+    private static void spawnAmbientParticles(World world, Vec3d pos, TowerMimicEntity entity) {
+        Random random = world.getRandom();
+        if (random.nextFloat() <= 0.5F) {
+            Vec3d vec3d = getRegularParticlesPos(pos, random);
+            world.addParticle(ParticleTypes.SMOKE, vec3d.getX() - 0.5, entity.isAlive() ? vec3d.getY() + 1 : vec3d.getY() + 0.1, vec3d.getZ() - 0.5, 0.0, 0.0, 0.0);
+            world.addParticle(ParticleTypes.SOUL_FIRE_FLAME, vec3d.getX() - 0.5, entity.isAlive() ? vec3d.getY() + 1 : vec3d.getY() + 0.1, vec3d.getZ() - 0.5, 0.0, 0.0, 0.0);
+        }
+    }
+
+    private static void playAmbientSound(World world, Vec3d pos) {
+        Random random = world.getRandom();
+        if (random.nextFloat() <= 0.02F) {
+            world.playSoundAtBlockCenter(BlockPos.ofFloored(pos), /*SoundEvents.BLOCK_VAULT_AMBIENT*/ SoundEvents.AMBIENT_UNDERWATER_LOOP, SoundCategory.BLOCKS, random.nextFloat() * 0.25F + 0.75F, random.nextFloat() + 0.5F, false);
+        }
+    }
+
+    private static Vec3d getDeactivateParticlesPos(BlockPos pos, Random random) {
+        return Vec3d.of(pos).add(MathHelper.nextDouble(random, 0.4, 0.6), MathHelper.nextDouble(random, 0.4, 0.6), MathHelper.nextDouble(random, 0.4, 0.6));
+    }
+
+    private static Vec3d getRegularParticlesPos(Vec3d pos, Random random) {
+        return pos.add(MathHelper.nextDouble(random, 0.1, 0.9), MathHelper.nextDouble(random, 0.25, 0.75), MathHelper.nextDouble(random, 0.1, 0.9));
+    }
+
+    private static Vec3d getConnectedParticlesOrigin(BlockPos pos, Direction direction) {
+        return Vec3d.ofBottomCenter(pos).add((double)direction.getOffsetX() * 0.5, 1.75, (double)direction.getOffsetZ() * 0.5);
     }
 
     public ItemStack getItemToEject() {
@@ -472,6 +514,12 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     public BlockPos getJumpPos() {
         return this.jumpTarget;
     }
+    public void setDirection(Direction direction) {
+        this.spawnDirection = direction;
+    }
+    public Direction getDirection() {
+        return this.spawnDirection;
+    }
 
     public void setTimeWithoutAttacking(int time) {
         this.timeWithoutAttacking = time;
@@ -495,12 +543,12 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     public int getLandAnimation() {
         return this.dataTracker.get(LAND);
     }
-    public void setTopOpen(boolean open) {
-        this.dataTracker.set(TOP_OPEN, open);
-    }
-    public boolean getTopOpen() {
-        return this.dataTracker.get(TOP_OPEN);
-    }
+    //public void setTopOpen(boolean open) {
+    //    this.dataTracker.set(TOP_OPEN, open);
+    //}
+    //public boolean getTopOpen() {
+    //    return this.dataTracker.get(TOP_OPEN);
+    //}
 
     public void setAttackAnimation(boolean attacking) {
         this.dataTracker.set(ATTACKING, attacking);
@@ -526,8 +574,8 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     public boolean getBreakAnimation() {
         return this.dataTracker.get(BREAK);
     }
-    public void setSpawnAnimation(boolean Break) {
-        this.dataTracker.set(SPAWN, Break);
+    public void setSpawnAnimation(boolean Spawn) {
+        this.dataTracker.set(SPAWN, Spawn);
     }
     public boolean getSpawnAnimation() {
         return this.dataTracker.get(SPAWN);
@@ -544,7 +592,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
         this.dataTracker.startTracking(JUMP_LAND, false);
         this.dataTracker.startTracking(ANIMATION_RESET, 0);
         this.dataTracker.startTracking(BREAK, false);
-        this.dataTracker.startTracking(TOP_OPEN, false);
+        //this.dataTracker.startTracking(TOP_OPEN, false);
         this.dataTracker.startTracking(SPAWN, false);
     }
 
@@ -561,7 +609,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     /* Goals & Attacks */
 
     @Override
-    public void shootAt(LivingEntity target, float pullProgress) {
+    public void attack(LivingEntity target, float pullProgress) {
         PersistentProjectileEntity persistentProjectileEntity = this.createArrowProjectile(pullProgress);
         if (persistentProjectileEntity instanceof ArrowEntity) {
             int i = MathHelper.nextBetween(Random.create(), 0, 4);
@@ -622,38 +670,34 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
 
 
         @Override
-        protected void attack(LivingEntity pEnemy) {
-            //System.out.println("Overall attack started");
-            if (this.canAttack(pEnemy)) {
-                //System.out.println("System thinks he can attack player");
+        protected void attack(LivingEntity target, double squaredDistance) {
+            double d = this.getSquaredMaxAttackDistance(target);
+            //this.entity.getPathfindingFavor(target.getBlockPos());
+
+            if (squaredDistance <= d && this.getCooldown() <= 0) {
                 shouldCountTillNextAttack = true;
             }
 
             if (shouldCountTillNextAttack) {
-                //System.out.println("shouldCountTillNextAttack started");
                 if (ticksUntilNextAttack == 7) {
-                    //System.out.println("Animation started");
                     entity.setAttackAnimation(true);
                 }
 
                 if (this.entity.getPose() != EntityPose.STANDING && ticksUntilNextAttack <= 7) {
-                    //System.out.println("Attack in air started");
 
                     this.resetCooldown();
-                    this.mob.tryAttack(pEnemy);
+                    this.mob.tryAttack(target);
 
                     entity.setTimeWithoutAttacking(0);
-                } else if (ticksUntilNextAttack <= 4 && canContinueAttack(pEnemy)) {
-                    //System.out.println("Actual attack started");
+                } else if (ticksUntilNextAttack <= 4 && squaredDistance <= d) {
 
                     this.resetCooldown();
-                    this.mob.tryAttack(pEnemy);
+                    this.mob.tryAttack(target);
 
                     entity.setTimeWithoutAttacking(0);
                 }
 
                 if (ticksUntilNextAttack <= 0) {
-                    //System.out.println("Attack ended");
                     resetAttackCooldown();
                     shouldCountTillNextAttack = false;
                     entity.setAttackAnimation(false);
@@ -676,10 +720,6 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
             } else if (ticksUntilNextAttack <= 0) {
                 resetAttackCooldown();
             }
-        }
-
-        protected boolean canContinueAttack(LivingEntity target) {
-            return this.entity.getAttackBox().expand(0.2, 0, 0.2).intersects(target.getHitbox());
         }
 
         @Override
@@ -793,7 +833,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
                     case 100 -> this.actor.shootAnimationStartState.stop();
                     case 60, 40, 20 -> {
                         this.actor.setShootState(2);
-                        ((RangedAttackMob) this.actor).shootAt(livingEntity, 1);
+                        ((RangedAttackMob) this.actor).attack(livingEntity, 1);
                     }
                     case 0 -> {
                         this.actor.setShootState(3);
@@ -849,7 +889,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
             if (this.entity.hasShootingGoal()) {
                 this.canChangeAttackType = false;
             }
-            this.entity.setPose(EntityPose.INHALING);
+            this.entity.setPose(INHALING);
         }
 
         @Override
@@ -868,12 +908,12 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
                 this.entity.setJumpAnimation(true);
             }
 
-            if (this.entity.getPose() == EntityPose.INHALING) {
+            if (this.entity.getPose() == INHALING) {
                 this.ticksInAir = Math.max(this.ticksInAir - 1, 0);
             }
 
 
-            if (this.ticksInAir == 0 && this.entity.getPose() == EntityPose.INHALING) {
+            if (this.ticksInAir == 0 && this.entity.getPose() == INHALING) {
                 BlockPos pos = this.entity.getJumpPos();
                 Vec3d vec3d = TowerMimicJumpGoal.getJumpingVelocity(this.entity, this.entity.getRandom(), Vec3d.ofBottomCenter(pos)).orElse(null);
                 if (vec3d == null) {
@@ -905,7 +945,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
 
         @Override
         public void stop() {
-            if (this.entity.getPose() == EntityPose.LONG_JUMPING || this.entity.getPose() == EntityPose.INHALING) {
+            if (this.entity.getPose() == EntityPose.LONG_JUMPING || this.entity.getPose() == INHALING) {
                 this.entity.setPose(EntityPose.STANDING);
             }
             this.ticksInAir = 10;

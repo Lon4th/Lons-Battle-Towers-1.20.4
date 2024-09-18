@@ -1,8 +1,13 @@
 package net.eps.lonsbattletowers.block.custom.vault;
 
 import net.eps.lonsbattletowers.block.entity.TowerVaultBlockEntity;
+import net.eps.lonsbattletowers.entity.ModEntities;
+import net.eps.lonsbattletowers.entity.custom.TowerMimicEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -12,12 +17,16 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldEvents;
 
+import java.util.Objects;
+
 public enum TowerVaultState implements StringIdentifiable {
     INACTIVE("inactive", TowerVaultState.Light.HALF_LIT) {
         @Override
         protected void onChangedTo(ServerWorld world, BlockPos pos, TowerVaultConfig config, TowerVaultSharedData sharedData) {
             //sharedData.setDisplayItem(ItemStack.EMPTY);
-            world.syncWorldEvent(/*WorldEvents.VAULT_DEACTIVATES*/ WorldEvents.TRIAL_SPAWNER_EJECTS_ITEM, pos, 0);
+            //world.syncWorldEvent(/*WorldEvents.VAULT_DEACTIVATES*/ WorldEvents.TRIAL_SPAWNER_EJECTS_ITEM, pos, 0);
+
+            sharedData.setDeactivated(true);
         }
     },
     ACTIVE("active", TowerVaultState.Light.LIT) {
@@ -26,8 +35,9 @@ public enum TowerVaultState implements StringIdentifiable {
             /*if (!sharedData.hasDisplayItem()) {
                 TowerVaultBlockEntity.Server.updateDisplayItem(world, this, config, sharedData, pos);
             }*/
+            //world.syncWorldEvent(/*WorldEvents.VAULT_ACTIVATES*/ WorldEvents.TRIAL_SPAWNER_DETECTS_PLAYER, pos, 0);
 
-            world.syncWorldEvent(/*WorldEvents.VAULT_ACTIVATES*/ WorldEvents.TRIAL_SPAWNER_DETECTS_PLAYER, pos, 0);
+            sharedData.setActivated(true);
         }
     },
     UNLOCKING("unlocking", TowerVaultState.Light.LIT) {
@@ -70,6 +80,7 @@ public enum TowerVaultState implements StringIdentifiable {
             case INACTIVE -> updateActiveState(world, pos, config, serverData, sharedData, config.activationRange());
             case ACTIVE -> updateActiveState(world, pos, config, serverData, sharedData, config.deactivationRange());
             case UNLOCKING -> {
+                //System.out.println("Unlocking started at " + world.getTime());
                 serverData.setStateUpdatingResumeTime(world.getTime() + 20L);
                 yield EJECTING;
             }
@@ -78,8 +89,9 @@ public enum TowerVaultState implements StringIdentifiable {
                     serverData.finishEjecting();
                     yield updateActiveState(world, pos, config, serverData, sharedData, config.deactivationRange());
                 } else {
+                    //System.out.println("Item ejected at " + world.getTime());
                     float f = serverData.getEjectSoundPitchModifier();
-                    this.ejectItem(world, pos, serverData.getItemToEject(), f);
+                    this.ejectItem(world, pos, Objects.equals(serverData.getSpawnedMimicTarget(), "null") ? serverData.getItemToEject() : Items.AIR.getDefaultStack(), f);
                     //sharedData.setDisplayItem(serverData.getItemToDisplay());
                     serverData.setStateUpdatingResumeTime(world.getTime() + 20L);
                     yield EJECTING;
@@ -88,9 +100,7 @@ public enum TowerVaultState implements StringIdentifiable {
         };
     }
 
-    private static TowerVaultState updateActiveState(
-            ServerWorld world, BlockPos pos, TowerVaultConfig config, TowerVaultServerData serverData, TowerVaultSharedData sharedData, double radius
-    ) {
+    private static TowerVaultState updateActiveState(ServerWorld world, BlockPos pos, TowerVaultConfig config, TowerVaultServerData serverData, TowerVaultSharedData sharedData, double radius) {
         sharedData.updateConnectedPlayers(world, pos, serverData, config, radius);
         serverData.setStateUpdatingResumeTime(world.getTime() + 20L);
         return sharedData.hasConnectedPlayers() ? ACTIVE : INACTIVE;
@@ -109,8 +119,8 @@ public enum TowerVaultState implements StringIdentifiable {
 
     private void ejectItem(ServerWorld world, BlockPos pos, ItemStack stack, float pitchModifier) {
         ItemDispenserBehavior.spawnItem(world, stack, 2, Direction.UP, Vec3d.ofBottomCenter(pos).offset(Direction.UP, 1.2));
-        world.syncWorldEvent(/*WorldEvents.VAULT_EJECTS_ITEM*/ WorldEvents.TRIAL_SPAWNER_EJECTS_ITEM, pos, 0);
-        world.playSound(null, pos, /*SoundEvents.BLOCK_VAULT_EJECT_ITEM*/ SoundEvents.BLOCK_TRIAL_SPAWNER_EJECT_ITEM, SoundCategory.BLOCKS, 1.0F, 0.8F + 0.4F * pitchModifier);
+        world.syncWorldEvent(/*WorldEvents.VAULT_EJECTS_ITEM*/ WorldEvents.DISPENSER_DISPENSES, pos, 0);
+        world.playSound(null, pos, /*SoundEvents.BLOCK_VAULT_EJECT_ITEM*/ SoundEvents.BLOCK_DISPENSER_DISPENSE, SoundCategory.BLOCKS, 1.0F, 0.8F + 0.4F * pitchModifier);
     }
 
     static enum Light {

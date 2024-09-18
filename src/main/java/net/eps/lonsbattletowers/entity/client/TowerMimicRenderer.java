@@ -24,7 +24,7 @@ public class TowerMimicRenderer extends MobEntityRenderer<TowerMimicEntity, Towe
         //if (entity.getTopOpen()) {
         //    return TEXTURE_OPEN;
         //}
-        return TEXTURE_OPEN;
+        return TEXTURE;
     }
 
     @Override

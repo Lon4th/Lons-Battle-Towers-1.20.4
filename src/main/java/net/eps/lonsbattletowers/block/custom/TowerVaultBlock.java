@@ -26,14 +26,14 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class TowerVaultBlock extends BlockWithEntity {
-    public static final MapCodec<TowerVaultBlock> CODEC = createCodec(TowerVaultBlock::new);
+    //public static final MapCodec<TowerVaultBlock> CODEC = createCodec(TowerVaultBlock::new);
     public static final EnumProperty<TowerVaultState> TOWER_VAULT_STATE = EnumProperty.of("tower_vault_state", TowerVaultState.class);
     public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
 
-    @Override
-    public MapCodec<TowerVaultBlock> getCodec() {
-        return CODEC;
-    }
+    //@Override
+    //public MapCodec<TowerVaultBlock> getCodec() {
+    //    return CODEC;
+    //}
 
     public TowerVaultBlock(AbstractBlock.Settings settings) {
         super(settings);
@@ -50,9 +50,7 @@ public class TowerVaultBlock extends BlockWithEntity {
             return ActionResult.PASS;
         } else if (world instanceof ServerWorld serverWorld) {
             if (serverWorld.getBlockEntity(pos) instanceof TowerVaultBlockEntity vaultBlockEntity) {
-                TowerVaultBlockEntity.Server.tryUnlock(
-                        serverWorld, pos, state, vaultBlockEntity.getConfig(), vaultBlockEntity.getServerData(), vaultBlockEntity.getSharedData(), player, stack
-                );
+                TowerVaultBlockEntity.Server.tryUnlock(serverWorld, pos, state, vaultBlockEntity.getConfig(), vaultBlockEntity.getServerData(), vaultBlockEntity.getSharedData(), player, stack);
                 return ActionResult.SUCCESS;
             } else {
                 return ActionResult.PASS;
@@ -77,8 +75,8 @@ public class TowerVaultBlock extends BlockWithEntity {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return world instanceof ServerWorld serverWorld ?
-                validateTicker(type, ModBlockEntities.TOWER_VAULT_BLOCK_ENTITY, (worldx, pos, statex, blockEntity) -> TowerVaultBlockEntity.Server.tick(serverWorld, pos, statex, blockEntity.getConfig(), blockEntity.getServerData(), blockEntity.getSharedData())) :
-                validateTicker(type, ModBlockEntities.TOWER_VAULT_BLOCK_ENTITY, (worldx, pos, statex, blockEntity) -> TowerVaultBlockEntity.Client.tick(worldx, pos, statex, blockEntity.getSharedData())
+                checkType(type, ModBlockEntities.TOWER_VAULT_BLOCK_ENTITY, (worldx, pos, statex, blockEntity) -> TowerVaultBlockEntity.Server.tick(serverWorld, pos, statex, blockEntity.getConfig(), blockEntity.getServerData(), blockEntity.getSharedData())) :
+                checkType(type, ModBlockEntities.TOWER_VAULT_BLOCK_ENTITY, (worldx, pos, statex, blockEntity) -> TowerVaultBlockEntity.Client.tick(worldx, pos, statex, blockEntity.getSharedData())
         );
     }
 

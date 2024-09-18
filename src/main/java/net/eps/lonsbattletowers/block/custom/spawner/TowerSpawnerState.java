@@ -1,6 +1,5 @@
 package net.eps.lonsbattletowers.block.custom.spawner;
 
-import net.minecraft.block.spawner.*;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -13,7 +12,7 @@ import net.minecraft.world.World;
 import java.util.Optional;
 
 public enum TowerSpawnerState implements StringIdentifiable {
-    INACTIVE("inactive", 0, ParticleEmitter.NONE, -1.0, false),
+    INACTIVE("inactive", 0, ParticleEmitter.WAITING, -1.0, false),
     WAITING_FOR_PLAYERS("waiting_for_players", 4, ParticleEmitter.WAITING, 200.0, true),
     ACTIVE("active", 8, ParticleEmitter.ACTIVE, 1000.0, true),
     ACTIVATING("activating", 8, ParticleEmitter.ACTIVE, 1000.0, true);

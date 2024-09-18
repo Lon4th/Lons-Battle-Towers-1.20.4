@@ -4,11 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.eps.lonsbattletowers.particle.ModParticles;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.block.spawner.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.entity.*;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -113,17 +109,20 @@ public class TowerSpawnerLogic {
             return Optional.empty();
         }
         Vec3d vec3d = new Vec3d(d, e, f);
-        if (!TowerSpawnerLogic.hasLineOfSight(world, pos.toCenterPos(), vec3d)) {
-            return Optional.empty();
-        }
-        BlockPos blockPos = BlockPos.ofFloored(vec3d);
-        if (!SpawnRestriction.canSpawn(optional.get(), world, SpawnReason.TRIAL_SPAWNER, blockPos, world.getRandom())) {
-            return Optional.empty();
-        }
         Entity entity2 = EntityType.loadEntityWithPassengers(nbtCompound, world, entity -> {
             entity.refreshPositionAndAngles(d, e, f, random.nextFloat() * 360.0f, 0.0f);
             return entity;
         });
+
+        if (!TowerSpawnerLogic.hasLineOfSight(world, pos.toCenterPos(), vec3d, entity2)) {
+            return Optional.empty();
+        }
+        BlockPos blockPos = BlockPos.ofFloored(vec3d);
+        //if (!SpawnRestriction.canSpawn(optional.get(), world, /* SpawnReason.TRIAL_SPAWNER */ SpawnReason.SPAWNER, blockPos, world.getRandom())) {
+        //    System.out.println("canSpawn broke");
+        //    return Optional.empty();
+        //}
+
         if (entity2 == null) {
             return Optional.empty();
         }
@@ -133,7 +132,7 @@ public class TowerSpawnerLogic {
                 return Optional.empty();
             }
             if (mobSpawnerEntry.getNbt().getSize() == 1 && mobSpawnerEntry.getNbt().contains("id", NbtElement.STRING_TYPE)) {
-                mobEntity.initialize(world, world.getLocalDifficulty(mobEntity.getBlockPos()), SpawnReason.TRIAL_SPAWNER, null, null);
+                mobEntity.initialize(world, world.getLocalDifficulty(mobEntity.getBlockPos()), /* SpawnReason.TRIAL_SPAWNER */ SpawnReason.MOB_SUMMONED, null, null);
                 //mobEntity.setPersistent();
             }
         }
@@ -189,7 +188,7 @@ public class TowerSpawnerLogic {
             TowerSpawnerLogic.addMobSpawnParticles(world, pos, random1);
 
             BlockPos blockPos = new BlockPos(towerSpawnerEvent.getPosX(), towerSpawnerEvent.getPosY(), towerSpawnerEvent.getPosZ());
-            world.playSoundAtBlockCenter(blockPos, SoundEvents.BLOCK_TRIAL_SPAWNER_SPAWN_MOB, SoundCategory.BLOCKS, 1.0f, (random1.nextFloat() - random1.nextFloat()) * 0.2f + 1.0f, true);
+            world.playSoundAtBlockCenter(blockPos, /* SoundEvents.BLOCK_TRIAL_SPAWNER_SPAWN_MOB */ SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, (random1.nextFloat() - random1.nextFloat()) * 0.2f + 1.0f, true);
             TowerSpawnerLogic.addMobSpawnParticles(world, blockPos, random1);
 
             TowerSpawnerEvent towerSpawnerEvent2 = towerSpawnerEvent.syncMobSpawnParticles(blockPos, "nothing");
@@ -198,7 +197,7 @@ public class TowerSpawnerLogic {
 
         if (towerSpawnerState == TowerSpawnerState.ACTIVATING) {
             Random random1 = world.getRandom();
-            world.playSoundAtBlockCenter(pos, SoundEvents.BLOCK_TRIAL_SPAWNER_DETECT_PLAYER, SoundCategory.BLOCKS, 1.0f, (random1.nextFloat() - random1.nextFloat()) * 0.2f + 1.0f, true);
+            world.playSoundAtBlockCenter(pos, /* SoundEvents.BLOCK_TRIAL_SPAWNER_DETECT_PLAYER */ SoundEvents.ENTITY_PIGLIN_ANGRY, SoundCategory.BLOCKS, 1.0f, (random1.nextFloat() - random1.nextFloat()) * 0.2f + 1.0f, true);
             TowerSpawnerLogic.addDetectionParticles(world, pos, random1, data.players.size());
         }
 
@@ -213,7 +212,7 @@ public class TowerSpawnerLogic {
             this.data.displayEntityRotation = (this.data.displayEntityRotation + towerSpawnerState.getDisplayRotationSpeed() / (d + 200.0)) % 360.0;
         }
         if (towerSpawnerState.playsSound() && (random = world.getRandom()).nextFloat() <= 0.02f) {
-            world.playSoundAtBlockCenter(pos, SoundEvents.BLOCK_TRIAL_SPAWNER_AMBIENT, SoundCategory.BLOCKS, random.nextFloat() * 0.25f + 0.75f, random.nextFloat() + 0.5f, false);
+            world.playSoundAtBlockCenter(pos, /* SoundEvents.BLOCK_TRIAL_SPAWNER_AMBIENT */ SoundEvents.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, random.nextFloat() * 0.25f + 0.75f, random.nextFloat() + 0.5f, false);
         }
     }
 
@@ -241,8 +240,8 @@ public class TowerSpawnerLogic {
         return entity == null || !entity.isAlive() || !entity.getWorld().getRegistryKey().equals(world.getRegistryKey()) || entity.getBlockPos().getSquaredDistance(pos) > (double)MAX_ENTITY_DISTANCE_SQUARED;
     }
 
-    private static boolean hasLineOfSight(World world, Vec3d spawnerPos, Vec3d spawnPos) {
-        BlockHitResult blockHitResult = world.raycast(new RaycastContext(spawnPos, spawnerPos, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, ShapeContext.absent()));
+    private static boolean hasLineOfSight(World world, Vec3d spawnerPos, Vec3d spawnPos, Entity entity) {
+        BlockHitResult blockHitResult = world.raycast(new RaycastContext(spawnPos, spawnerPos, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, entity));
         return blockHitResult.getBlockPos().equals(BlockPos.ofFloored(spawnerPos)) || blockHitResult.getType() == HitResult.Type.MISS;
     }
 

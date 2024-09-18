@@ -1,10 +1,10 @@
 package net.eps.lonsbattletowers.block.custom.spawner;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.spawner.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
@@ -18,18 +18,22 @@ import net.minecraft.util.collection.DataPool;
 import net.minecraft.util.collection.Weighted;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.MobSpawnerEntry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
 
+import static net.minecraft.util.Uuids.INT_STREAM_CODEC;
+
 public class TowerSpawnerData {
     public static final String SPAWN_DATA_KEY = "spawn_data";
     private static final String NEXT_MOB_SPAWNS_AT_KEY = "next_mob_spawns_at";
+    public static final Codec<Set<UUID>> SET_CODEC = Codec.list(Uuids.INT_STREAM_CODEC).xmap(Sets::newHashSet, Lists::newArrayList);
     public static MapCodec<TowerSpawnerData> codec = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Uuids.SET_CODEC.optionalFieldOf("registered_players", Sets.newHashSet()).forGetter(data -> data.players),
-            Uuids.SET_CODEC.optionalFieldOf("current_mobs", Sets.newHashSet()).forGetter(data -> data.spawnedMobsAlive),
+            SET_CODEC.optionalFieldOf("registered_players", Sets.newHashSet()).forGetter(data -> data.players),
+            SET_CODEC.optionalFieldOf("current_mobs", Sets.newHashSet()).forGetter(data -> data.spawnedMobsAlive),
             Codec.LONG.optionalFieldOf("cooldown_ends_at", 0L).forGetter(data -> data.cooldownEnd),
             Codec.LONG.optionalFieldOf(NEXT_MOB_SPAWNS_AT_KEY, 0L).forGetter(data -> data.nextMobSpawnsAt),
             MobSpawnerEntry.CODEC.optionalFieldOf(SPAWN_DATA_KEY).forGetter(data -> data.spawnData)).apply(instance, TowerSpawnerData::new));

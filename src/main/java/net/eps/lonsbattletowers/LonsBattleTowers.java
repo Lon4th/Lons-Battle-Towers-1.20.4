@@ -4,6 +4,7 @@ import net.eps.lonsbattletowers.block.ModBlocks;
 import net.eps.lonsbattletowers.block.entity.ModBlockEntities;
 import net.eps.lonsbattletowers.entity.ModEntities;
 import net.eps.lonsbattletowers.entity.custom.TowerMimicEntity;
+import net.eps.lonsbattletowers.item.ModItems;
 import net.eps.lonsbattletowers.particle.ModParticles;
 import net.eps.lonsbattletowers.render.block.TowerSpawnerBlockEntityRenderer;
 import net.fabricmc.api.ModInitializer;
@@ -28,6 +29,8 @@ public class LonsBattleTowers implements ModInitializer {
 
 		ModBlocks.registerModBlocks();
 		ModBlockEntities.registerBlockEntities();
+
+		ModItems.registerModItems();
 
 		ModParticles.registerParticles();
 

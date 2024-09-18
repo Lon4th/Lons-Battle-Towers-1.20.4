@@ -10,6 +10,8 @@ import net.minecraft.client.render.block.entity.MobSpawnerBlockEntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.world.World;
 
 public class TowerSpawnerBlockEntityRenderer implements BlockEntityRenderer<TowerSpawnerBlockEntity> {
@@ -29,7 +31,25 @@ public class TowerSpawnerBlockEntityRenderer implements BlockEntityRenderer<Towe
         TowerSpawnerData towerSpawnerData = towerSpawnerLogic.getData();
         Entity entity = towerSpawnerData.setDisplayEntity(towerSpawnerLogic, world, towerSpawnerLogic.getSpawnerState());
         if (entity != null) {
-            MobSpawnerBlockEntityRenderer.render(f, matrixStack, vertexConsumerProvider, i, entity, this.entityRenderDispatcher, towerSpawnerData.getLastDisplayEntityRotation(), towerSpawnerData.getDisplayEntityRotation());
+            render(f, matrixStack, vertexConsumerProvider, i, entity, this.entityRenderDispatcher, towerSpawnerData.getLastDisplayEntityRotation(), towerSpawnerData.getDisplayEntityRotation());
         }
+    }
+
+    public static void render(float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, Entity entity, EntityRenderDispatcher entityRenderDispatcher, double lastRotation, double rotation) {
+        matrices.push();
+        matrices.translate(0.5F, 0.0F, 0.5F);
+        float f = 0.53125F;
+        float g = Math.max(entity.getWidth(), entity.getHeight());
+        if ((double)g > 1.0) {
+            f /= g;
+        }
+
+        matrices.translate(0.0F, 0.4F, 0.0F);
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float) MathHelper.lerp((double)tickDelta, lastRotation, rotation) * 10.0F));
+        matrices.translate(0.0F, -0.2F, 0.0F);
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-30.0F));
+        matrices.scale(f, f, f);
+        entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, tickDelta, matrices, vertexConsumers, light);
+        matrices.pop();
     }
 }

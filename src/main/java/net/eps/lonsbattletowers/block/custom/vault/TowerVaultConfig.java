@@ -4,7 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.eps.lonsbattletowers.LonsBattleTowers;
-import net.minecraft.block.spawner.EntityDetector;
+import net.eps.lonsbattletowers.block.custom.spawner.EntityDetector;
+import net.eps.lonsbattletowers.item.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -37,7 +38,7 @@ public record TowerVaultConfig(Identifier lootTable, double activationRange, dou
         this(new Identifier(LonsBattleTowers.MOD_ID, "chests/tower_vault"),
              4.0,
              4.5,
-             new ItemStack(Items.TRIAL_KEY),
+             new ItemStack(ModItems.TOWER_KEY),
              Optional.empty(),
              (world, center, radius) -> world.getPlayers(player -> player.getBlockPos().isWithinDistance(center, radius) && !player.isSpectator()).stream().map(Entity::getUuid).toList()
              //EntityDetector.Selector.IN_WORLD

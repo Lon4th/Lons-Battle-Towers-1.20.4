@@ -4,6 +4,11 @@
       "model": "lonsbattletowers:block/tower_vault_on",
       "y": 90
     },
+
+
+
+
+
     "facing=east,tower_vault_state=ejecting": {
       "model": "lonsbattletowers:block/tower_vault_ejecting_reward",
       "y": 90
@@ -19,6 +24,10 @@
     "facing=north,tower_vault_state=active": {
       "model": "lonsbattletowers:block/tower_vault_on"
     },
+
+
+
+
     "facing=north,tower_vault_state=ejecting": {
       "model": "lonsbattletowers:block/tower_vault_ejecting_reward"
     },
@@ -32,6 +41,8 @@
       "model": "lonsbattletowers:block/tower_vault_on",
       "y": 180
     },
+
+
     "facing=south,tower_vault_state=ejecting": {
       "model": "lonsbattletowers:block/tower_vault_ejecting_reward",
       "y": 180
@@ -48,6 +59,11 @@
       "model": "lonsbattletowers:block/tower_vault_on",
       "y": 270
     },
+
+
+
+
+
     "facing=west,tower_vault_state=ejecting": {
       "model": "lonsbattletowers:block/tower_vault_ejecting_reward",
       "y": 270

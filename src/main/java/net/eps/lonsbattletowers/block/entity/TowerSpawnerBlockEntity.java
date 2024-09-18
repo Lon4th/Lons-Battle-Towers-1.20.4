@@ -2,14 +2,10 @@ package net.eps.lonsbattletowers.block.entity;
 
 import com.mojang.logging.LogUtils;
 import net.eps.lonsbattletowers.block.custom.*;
-import net.eps.lonsbattletowers.block.custom.spawner.TowerSpawnerEvent;
-import net.eps.lonsbattletowers.block.custom.spawner.TowerSpawnerLogic;
-import net.eps.lonsbattletowers.block.custom.spawner.TowerSpawnerState;
+import net.eps.lonsbattletowers.block.custom.spawner.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.Spawner;
-import net.minecraft.block.spawner.EntityDetector;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
@@ -19,7 +15,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 
-public class TowerSpawnerBlockEntity extends BlockEntity implements Spawner, TowerSpawnerLogic.TowerSpawner {
+public class TowerSpawnerBlockEntity extends BlockEntity implements TowerSpawner, TowerSpawnerLogic.TowerSpawner {
     private static final Logger LOGGER = LogUtils.getLogger();
     private TowerSpawnerLogic spawner;
 

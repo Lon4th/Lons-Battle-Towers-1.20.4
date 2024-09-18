@@ -4,17 +4,21 @@ import com.google.common.annotations.VisibleForTesting;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.eps.lonsbattletowers.block.custom.TowerVaultBlock;
 import net.eps.lonsbattletowers.block.custom.vault.TowerVaultConfig;
 import net.eps.lonsbattletowers.block.custom.vault.TowerVaultServerData;
 import net.eps.lonsbattletowers.block.custom.vault.TowerVaultSharedData;
 import net.eps.lonsbattletowers.block.custom.vault.TowerVaultState;
+import net.eps.lonsbattletowers.entity.ModEntities;
+import net.eps.lonsbattletowers.entity.custom.TowerMimicEntity;
 import net.eps.lonsbattletowers.particle.ModParticles;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.command.argument.EntityAnchorArgumentType;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
@@ -28,16 +32,14 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -52,7 +54,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class TowerVaultBlockEntity extends BlockEntity {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -125,19 +126,28 @@ public class TowerVaultBlockEntity extends BlockEntity {
     }
 
     public static final class Client {
-        private static final int field_48870 = 20;
-        private static final float field_48871 = 0.5F;
-        private static final float field_48872 = 0.02F;
-        private static final int field_48873 = 20;
-        private static final int field_48874 = 20;
 
         public static void tick(World world, BlockPos pos, BlockState state, TowerVaultSharedData sharedData) {
+            Random random = world.getRandom();
+
             //clientData.rotateDisplay();
             if (world.getTime() % 20L == 0L) {
                 spawnConnectedParticles(world, pos, state, sharedData);
             }
 
-            spawnAmbientParticles(world, pos, state.get(TowerVaultBlock.TOWER_VAULT_STATE), ParticleTypes.SOUL_FIRE_FLAME);
+            if (sharedData.getActivated()) {
+                spawnActivateParticles(world, pos, state, sharedData, ParticleTypes.SMALL_FLAME);
+                world.playSoundAtBlockCenter(pos, /* SoundEvents.BLOCK_VAULT_ACTIVATE */ SoundEvents.BLOCK_BEACON_ACTIVATE, SoundCategory.BLOCKS, 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, true);
+
+                sharedData.setActivated(false);
+            } else if (sharedData.getDeactivated()) {
+                spawnDeactivateParticles(world, pos, ParticleTypes.SMALL_FLAME);
+                world.playSoundAtBlockCenter(pos, /* SoundEvents.BLOCK_VAULT_DEACTIVATE */ SoundEvents.BLOCK_BEACON_DEACTIVATE, SoundCategory.BLOCKS, 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, true);
+
+                sharedData.setDeactivated(false);
+            }
+
+            spawnAmbientParticles(world, pos, state.get(TowerVaultBlock.TOWER_VAULT_STATE));
             playAmbientSound(world, pos, state.get(TowerVaultBlock.TOWER_VAULT_STATE));
         }
 
@@ -162,13 +172,13 @@ public class TowerVaultBlockEntity extends BlockEntity {
             }
         }
 
-        private static void spawnAmbientParticles(World world, BlockPos pos, TowerVaultState state, ParticleEffect particle) {
+        private static void spawnAmbientParticles(World world, BlockPos pos, TowerVaultState state) {
             Random random = world.getRandom();
             if (random.nextFloat() <= 0.5F) {
                 Vec3d vec3d = getRegularParticlesPos(pos, random);
                 world.addParticle(ParticleTypes.SMOKE, vec3d.getX(), vec3d.getY(), vec3d.getZ(), 0.0, 0.0, 0.0);
                 if (state.equals(TowerVaultState.ACTIVE)) {
-                    world.addParticle(particle, vec3d.getX(), vec3d.getY(), vec3d.getZ(), 0.0, 0.0, 0.0);
+                    world.addParticle(ParticleTypes.FLAME, vec3d.getX(), vec3d.getY(), vec3d.getZ(), 0.0, 0.0, 0.0);
                 }
             }
         }
@@ -222,7 +232,7 @@ public class TowerVaultBlockEntity extends BlockEntity {
         }
 
         private static Vec3d getRegularParticlesPos(BlockPos pos, Random random) {
-            return Vec3d.of(pos).add(MathHelper.nextDouble(random, 0.1, 0.9), MathHelper.nextDouble(random, 0.25, 0.75), MathHelper.nextDouble(random, 0.1, 0.9));
+            return Vec3d.of(pos).add(MathHelper.nextDouble(random, 0.075, 0.925), MathHelper.nextDouble(random, 0.25, 0.75), MathHelper.nextDouble(random, 0.075, 0.925));
         }
 
         private static Vec3d getConnectedParticlesOrigin(BlockPos pos, Direction direction) {
@@ -231,12 +241,10 @@ public class TowerVaultBlockEntity extends BlockEntity {
     }
 
     public static final class Server {
-        private static final int UNLOCK_TIME = 14;
-        private static final int DISPLAY_UPDATE_INTERVAL = 20;
-        private static final int FAILED_UNLOCK_COOLDOWN = 15;
 
         public static void tick(ServerWorld world, BlockPos pos, BlockState state, TowerVaultConfig config, TowerVaultServerData serverData, TowerVaultSharedData sharedData) {
             TowerVaultState vaultState = state.get(TowerVaultBlock.TOWER_VAULT_STATE);
+            //world.setBlockState(pos, state.with(TowerVaultBlock.IS_MIMIC, true));
 
             /*if (shouldUpdateDisplayItem(world.getTime(), vaultState)) {
                 updateDisplayItem(world, vaultState, config, sharedData, pos);
@@ -248,6 +256,35 @@ public class TowerVaultBlockEntity extends BlockEntity {
                 blockState = state.with(TowerVaultBlock.TOWER_VAULT_STATE, vaultState.update(world, pos, config, serverData, sharedData));
                 if (!state.equals(blockState)) {
                     changeVaultState(world, pos, state, blockState, config, sharedData);
+                } else if (state.equals(blockState) && vaultState == TowerVaultState.EJECTING && !Objects.equals(serverData.getSpawnedMimicTarget(), "null")) {
+                    TowerMimicEntity towerMimicEntity = ModEntities.TOWER_MIMIC.spawn(world, pos, SpawnReason.TRIGGERED);
+                    //TowerMimicEntity towerMimicEntity = new TowerMimicEntity(ModEntities.TOWER_MIMIC, world);
+                    //TowerMimicEntity towerMimicEntity = ModEntities.TOWER_MIMIC.create(world);
+
+                    if (towerMimicEntity == null) {
+                        return;
+                    }
+                    world.spawnEntity(towerMimicEntity);
+
+                    //towerMimicEntity.setDirection(world.getBlockState(pos).get(TowerVaultBlock.FACING));
+                    //towerMimicEntity.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, pos.toCenterPos().add(11, 0, 0));
+                    //towerMimicEntity.teleport(world, (double)pos.getX() + 0.5, (double)pos.getY() + 0.05, (double)pos.getZ() + 0.5, PositionFlag.getFlags(1), 0.0F, 0.0F);
+                    //towerMimicEntity.setBodyYaw(90);
+                    //towerMimicEntity.setYaw(90);
+                    //towerMimicEntity.refreshPositionAndAngles((double)pos.getX() + 0.5, (double)pos.getY(), (double)pos.getZ() + 0.5, MathHelper.wrapDegrees(90), 0.0F);
+                    //towerMimicEntity.setHeadYaw(MathHelper.wrapDegrees(90));
+                    //towerMimicEntity.updatePositionAndAngles((double)pos.getX() + 0.5, (double)pos.getY() + 0.05, (double)pos.getZ() + 0.5, 0.0F, 0.0F);
+
+                    if (!world.getPlayerByUuid(UUID.fromString(serverData.getSpawnedMimicTarget())).isCreative()) {
+                        towerMimicEntity.setTarget(world.getPlayerByUuid(UUID.fromString(serverData.getSpawnedMimicTarget())));
+                        serverData.setSpawnedMimicTarget("null");
+                    }
+
+                    //towerMimicEntity.setSpawnAnimation(true);
+                    world.breakBlock(pos, false);
+
+
+                    return;
                 }
             }
 
@@ -271,6 +308,11 @@ public class TowerVaultBlockEntity extends BlockEntity {
                     playFailedUnlockSound(world, serverData, pos, /*SoundEvents.BLOCK_VAULT_REJECT_REWARDED_PLAYER*/ SoundEvents.BLOCK_AMETHYST_BLOCK_BREAK);
                 } else {
                     List<ItemStack> list = generateLoot(world, config, pos, player);
+                    if (world.getRandom().nextInt(100) <= 5) {
+                        serverData.setSpawnedMimicTarget(player.getUuid().toString());
+                    } else {
+                        serverData.setSpawnedMimicTarget("null");
+                    }
                     if (!list.isEmpty()) {
                         player.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
                         if (!player.isCreative()) {
@@ -290,25 +332,6 @@ public class TowerVaultBlockEntity extends BlockEntity {
             world.setBlockState(pos, newState, Block.NOTIFY_ALL);
             vaultState.onStateChange(world, pos, vaultState2, config, sharedData);
         }
-
-        /*public static void updateDisplayItem(ServerWorld world, TowerVaultState state, TowerVaultConfig config, TowerVaultSharedData sharedData, BlockPos pos) {
-            if (!canBeUnlocked(config, state)) {
-                sharedData.setDisplayItem(ItemStack.EMPTY);
-            } else {
-                ItemStack itemStack = generateDisplayItem(world, pos, config.overrideLootTableToDisplay().orElse(config.lootTable()));
-                sharedData.setDisplayItem(itemStack);
-            }
-        }*/
-
-        /*private static ItemStack generateDisplayItem(ServerWorld world, BlockPos pos, Identifier lootTable) {
-            LootTable lootTable2 = world.getServer().getLootManager().getLootTable(lootTable);
-            LootContextParameterSet lootContextParameterSet = new LootContextParameterSet.Builder(world)
-                    .add(LootContextParameters.ORIGIN, Vec3d.ofCenter(pos))
-                    .build(LootContextTypes.CHEST);
-            List<ItemStack> list = lootTable2.generateLoot(lootContextParameterSet, world.getRandom().nextLong());
-
-            return list.isEmpty() ? ItemStack.EMPTY : Util.getRandom(list, world.getRandom());
-        }*/
 
         private static void unlock(ServerWorld world, BlockState state, BlockPos pos, TowerVaultConfig config, TowerVaultServerData serverData, TowerVaultSharedData sharedData, List<ItemStack> itemsToEject) {
             serverData.setItemsToEject(itemsToEject);

@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:chest",
+  "type": "minecraft:block",
   "pools": [
     {
       "bonus_rolls": 0.0,
@@ -220,6 +220,5 @@
         "min": 2.0
       }
     }
-  ],
-  "random_sequence": "lonsbattletowers:chests/tower_vault"
+  ]
 }

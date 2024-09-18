@@ -21,7 +21,6 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.block.entity.MobSpawnerBlockEntityRenderer;
-import net.minecraft.client.render.block.entity.TrialSpawnerBlockEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 
 import static net.eps.lonsbattletowers.block.ModBlocks.*;
