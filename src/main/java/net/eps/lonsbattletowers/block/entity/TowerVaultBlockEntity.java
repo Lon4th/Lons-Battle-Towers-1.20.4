@@ -383,7 +383,7 @@ public class TowerVaultBlockEntity extends BlockEntity {
                     playFailedUnlockSound(world, serverData, pos, ModSounds.VAULT_REJECT_REWARDED_PLAYERS);
                 } else {
                     List<ItemStack> list = generateLoot(world, config, pos, player);
-                    if (world.getRandom().nextFloat() <= 1.06f) { /* Set to 0 */
+                    if (world.getRandom().nextFloat() <= 0.06f) {
                         serverData.setSpawnedMimicTarget(player.getUuid().toString());
                     } else {
                         serverData.setSpawnedMimicTarget("null");
