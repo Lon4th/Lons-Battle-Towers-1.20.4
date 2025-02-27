@@ -1,0 +1,42 @@
+{
+  "name": "lonsbattletowers:battle_tower/decor/decor_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 50,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/decor/knight_statue_1",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 50,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/decor/knight_statue_2",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 50,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/decor/knight_statue_3",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 50,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/decor/knight_statue_4",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

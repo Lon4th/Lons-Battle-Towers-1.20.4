@@ -8,11 +8,11 @@ import net.minecraft.world.MobSpawnerEntry;
 
 public record TowerSpawnerConfig(int requiredPlayerRange, int spawnRange, float simultaneousMobs, float simultaneousMobsAddedPerPlayer, int ticksBetweenSpawn, int targetCooldownLength, DataPool<MobSpawnerEntry> spawnPotentialsDefinition) {
     public static TowerSpawnerConfig defaultInstance = new TowerSpawnerConfig(
-            14,
-            4,
+            28,
+            6,
             4.0f,
-            1.0f,
-            50,
+            2.0f,
+            60,
             36000,
             DataPool.<MobSpawnerEntry>empty());
     public static MapCodec<TowerSpawnerConfig> codec = RecordCodecBuilder.mapCodec(instance -> instance.group(Codec.intRange(1, 128).optionalFieldOf("required_player_range",

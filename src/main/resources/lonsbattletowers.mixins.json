@@ -1,12 +1,15 @@
 {
   "required": true,
-  "package": "net.eps.lonsbattletowers.mixin",
+  "package": "net.eps.lonsbattletowers.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BlockEntityAccessor",
     "ExampleMixin",
+    "LootableContainerBlockEntityMixin",
+    "LootTableMixin",
     "SpawnEggMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }

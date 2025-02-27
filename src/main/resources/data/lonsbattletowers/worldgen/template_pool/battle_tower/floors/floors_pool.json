@@ -1,0 +1,114 @@
+{
+  "name": "lonsbattletowers:battle_tower/floors/floors_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_01",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_02",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_03",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_04",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_05",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_06",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_07",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_08",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_09",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_10",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_11",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/floors/tower_floor_12",
+        "processors": "lonsbattletowers:tower_floor_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

@@ -3,23 +3,27 @@ package net.eps.lonsbattletowers;
 import net.eps.lonsbattletowers.block.ModBlocks;
 import net.eps.lonsbattletowers.block.entity.ModBlockEntities;
 import net.eps.lonsbattletowers.entity.ModEntities;
+import net.eps.lonsbattletowers.entity.custom.golem.TowerGolemEntity;
 import net.eps.lonsbattletowers.entity.custom.TowerMimicEntity;
 import net.eps.lonsbattletowers.item.ModItems;
+import net.eps.lonsbattletowers.loot.ModLootContextParameters;
+import net.eps.lonsbattletowers.loot.ModLootContextTypes;
+import net.eps.lonsbattletowers.loot.ModLootFunctionTypes;
 import net.eps.lonsbattletowers.particle.ModParticles;
 import net.eps.lonsbattletowers.render.block.TowerSpawnerBlockEntityRenderer;
+import net.eps.lonsbattletowers.sounds.ModSounds;
+import net.eps.lonsbattletowers.worldgen.structure.ModStructures;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.ActionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LonsBattleTowers implements ModInitializer {
 	public static final String MOD_ID = "lonsbattletowers";
+	public static final boolean IS_OPTIONAL_MOD_LOADED = FabricLoader.getInstance().isModLoaded("lootr");
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
@@ -33,7 +37,15 @@ public class LonsBattleTowers implements ModInitializer {
 		ModItems.registerModItems();
 
 		ModParticles.registerParticles();
+		ModSounds.registerModSounds();
 
-		FabricDefaultAttributeRegistry.register(ModEntities.TOWER_MIMIC, TowerMimicEntity.createTowerMimicAttributes() );
+		ModStructures.registerStructures();
+
+		ModLootContextParameters.registerLootContextParameters();
+		ModLootContextTypes.registerLootTypes();
+		ModLootFunctionTypes.registerLootFunctions();
+
+		FabricDefaultAttributeRegistry.register(ModEntities.TOWER_MIMIC, TowerMimicEntity.createTowerMimicAttributes());
+		FabricDefaultAttributeRegistry.register(ModEntities.TOWER_GOLEM, TowerGolemEntity.createTowerGolemAttributes());
 	}
 }

@@ -1,0 +1,42 @@
+{
+  "name": "lonsbattletowers:battle_tower/additions/walls_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 6,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/tower_addition_wall_full",
+        "processors": "lonsbattletowers:tower_addition_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/tower_addition_wall_windowed",
+        "processors": "lonsbattletowers:tower_addition_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/tower_addition_wall_full_under_roof",
+        "processors": "lonsbattletowers:tower_addition_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/tower_addition_wall_windowed_under_roof",
+        "processors": "lonsbattletowers:tower_addition_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

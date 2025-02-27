@@ -1,0 +1,7 @@
+tiny	2	0	intermediary	named
+c	net/zestyblaze/lootr/client/item/LootrChestItemRenderer	net/zestyblaze/lootr/client/item/LootrChestItemRenderer
+	m	(Lnet/minecraft/class_1799;Lnet/minecraft/class_811;Lnet/minecraft/class_4587;Lnet/minecraft/class_4597;II)V	render	lonsbattletowers_override$renderByItemChest
+
+
+#c	net/zestyblaze/lootr/client/item/LootrShulkerItemRenderer	net/zestyblaze/lootr/client/item/LootrShulkerItemRenderer
+#	m	(Lnet/minecraft/class_1799;Lnet/minecraft/class_811;Lnet/minecraft/class_4587;Lnet/minecraft/class_4597;II)V	render	renderByItemShulker

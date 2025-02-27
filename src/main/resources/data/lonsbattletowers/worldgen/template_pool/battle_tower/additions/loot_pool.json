@@ -1,0 +1,51 @@
+{
+  "name": "lonsbattletowers:battle_tower/additions/loot_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 25,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/loot/empty",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/loot/barrels",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/loot/chest",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/loot/spawner",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/loot/vault",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

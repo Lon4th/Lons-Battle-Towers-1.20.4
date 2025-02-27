@@ -5,6 +5,11 @@ import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.eps.lonsbattletowers.LonsBattleTowers;
 import net.eps.lonsbattletowers.entity.math.LongJumpUtil;
+import net.eps.lonsbattletowers.entity.math.TowerMimicPose;
+import net.eps.lonsbattletowers.sounds.ModSounds;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.*;
@@ -16,6 +21,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -34,7 +40,9 @@ import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -47,6 +55,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static net.minecraft.entity.EntityPose.CROUCHING;
 
 public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     private static final TrackedData<Boolean> ATTACKING = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -61,7 +71,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     private static final TrackedData<Integer> LAND = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Integer> ANIMATION_RESET = DataTracker.registerData(TowerMimicEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
-    private static EntityPose INHALING;
+    //private static EntityPose INHALING;
 
     private boolean targetChange = false;
     private boolean allowGoalsInit = true;
@@ -185,7 +195,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
                 this.setShootState(3);
                 this.dataTracker.set(ANIMATION_RESET, 1);
             }
-            if (this.getJumpAnimation() && this.getPose() != INHALING && this.isOnGround()) {
+            if (this.getJumpAnimation() && this.getPose() != CROUCHING && this.isOnGround()) {
                 this.setJumpAnimation(false);
                 this.dataTracker.set(ANIMATION_RESET, 2);
             }
@@ -405,6 +415,8 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
             this.setVelocity(Vec3d.ZERO);
         }
 
+        this.playDeathSound(damageSource);
+
         super.onDeath(damageSource);
     }
 
@@ -602,8 +614,71 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 40)
                 .add(EntityAttributes.GENERIC_ARMOR, 10)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.4f)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 1);
+    }
+
+    /*protected SoundEvent getAmbientSound() {
+        return SoundEvents.ENTITY_ZOMBIE_AMBIENT;
+    }*/
+
+    protected SoundEvent getHurtSound(DamageSource source) {
+        //return ModSounds.MIMIC_HURT;
+        return null;
+    }
+
+    protected SoundEvent getDeathSound() {
+        return null;
+    }
+
+    protected SoundEvent getStepSound() {
+        return ModSounds.MIMIC_STEP;
+    }
+
+    protected SoundEvent getAmbientSound() {
+        return ModSounds.MIMIC_AMBIENT;
+    }
+
+    @Override
+    public void playAmbientSound() {
+        SoundEvent soundEvent = this.getAmbientSound();
+        if (soundEvent != null && this.getTarget() == null) {
+            this.playSound(this.getAmbientSound(), 0.2f, (float) random.nextBetweenExclusive(0, 10) / 10);
+        }
+    }
+
+    protected void playHurtSound(DamageSource source) {
+        //this.resetSoundDelay();
+
+        SoundEvent hurtBreathe = ModSounds.MIMIC_HURT_BREATHE;
+        SoundEvent hurtHit = ModSounds.MIMIC_HURT_HIT;
+        SoundEvent hurtShake = ModSounds.MIMIC_HURT_SHAKE;
+
+        this.playSound(hurtBreathe, 0.2f, (float) random.nextBetweenExclusive(0, 15) / 10);
+        this.playSound(hurtHit, 0.5f, 1f);
+        this.playSound(hurtShake, 0.5f, 1f);
+    }
+
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        this.playSound(this.getStepSound(), (float) random.nextBetween(0, 25) / 100, (float) random.nextBetweenExclusive(0, 20) / 10);
+        this.playSound(SoundEvents.ENTITY_IRON_GOLEM_STEP, 0.25F, 1.2F);
+
+        //BlockSoundGroup blockSoundGroup = state.getSoundGroup();
+        //this.playSound(blockSoundGroup.getStepSound(), blockSoundGroup.getVolume() * 0.15F, blockSoundGroup.getPitch());
+    }
+
+    protected void playDeathSound(DamageSource source) {
+        SoundEvent deathBreak = ModSounds.MIMIC_DEATH_BREAK;
+        SoundEvent deathFall = ModSounds.MIMIC_DEATH_FALL;
+        SoundEvent deathShake = ModSounds.MIMIC_DEATH_SHAKE;
+
+        this.playSound(deathBreak, 0.8f, 1f);
+        this.playSound(deathFall, 0.5f, 1f);
+        this.playSound(deathShake, 0.5f, 1f);
+
+        //this.playSound(hurtBreathe, 0.2f, (float) random.nextBetweenExclusive(0, 15) / 10);
+        //this.playSound(hurtHit, 0.5f, 1f);
+        //this.playSound(hurtShake, 0.5f, 1f);
     }
 
     /* Goals & Attacks */
@@ -631,6 +706,9 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
         persistentProjectileEntity.setVelocity(d, e + g * (double)0.2f, f, 1.6f, 14 - this.getWorld().getDifficulty().getId() * 4);
 
         this.playSound(SoundEvents.ITEM_CROSSBOW_SHOOT, 1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
+
+        //this.getWorld().spawnEntity(persistentProjectileEntity);
+
         if (Math.random() >= 0.2) {
             this.getWorld().spawnEntity(persistentProjectileEntity);
         } else {
@@ -681,6 +759,11 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
             if (shouldCountTillNextAttack) {
                 if (ticksUntilNextAttack == 7) {
                     entity.setAttackAnimation(true);
+
+                    entity.playSound(ModSounds.MIMIC_BITE_BLADE, 0.32f, 1.0f);
+                    entity.playSound(ModSounds.MIMIC_BITE_BREATHE, 0.15f, (float) target.getRandom().nextBetweenExclusive(10, 15) / 10);
+                    entity.playSound(ModSounds.MIMIC_BITE_SHAKE, 0.35f, 1.0f);
+                    entity.playSound(ModSounds.MIMIC_BITE_SHAKE_METALLIC, (float) target.getRandom().nextBetweenExclusive(0, 35) / 100, 1.0f);
                 }
 
                 if (this.entity.getPose() != EntityPose.STANDING && ticksUntilNextAttack <= 7) {
@@ -689,7 +772,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
                     this.mob.tryAttack(target);
 
                     entity.setTimeWithoutAttacking(0);
-                } else if (ticksUntilNextAttack <= 4 && squaredDistance <= d) {
+                } else if (ticksUntilNextAttack <= 2 && squaredDistance <= d) {
 
                     this.resetCooldown();
                     this.mob.tryAttack(target);
@@ -831,6 +914,10 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
                 this.attackInterval--;
                 switch (this.attackInterval) {
                     case 100 -> this.actor.shootAnimationStartState.stop();
+                    case 62, 42, 22 -> {
+                        this.actor.playSound(ModSounds.MIMIC_SHOOT_SHOOT, 0.75f, 1.0f);
+                        this.actor.playSound(ModSounds.MIMIC_SHOOT_CREAK, 0.45f, 1.0f);
+                    }
                     case 60, 40, 20 -> {
                         this.actor.setShootState(2);
                         ((RangedAttackMob) this.actor).attack(livingEntity, 1);
@@ -889,7 +976,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
             if (this.entity.hasShootingGoal()) {
                 this.canChangeAttackType = false;
             }
-            this.entity.setPose(INHALING);
+            this.entity.setPose(CROUCHING);
         }
 
         @Override
@@ -908,12 +995,12 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
                 this.entity.setJumpAnimation(true);
             }
 
-            if (this.entity.getPose() == INHALING) {
+            if (this.entity.getPose() == CROUCHING) {
                 this.ticksInAir = Math.max(this.ticksInAir - 1, 0);
             }
 
 
-            if (this.ticksInAir == 0 && this.entity.getPose() == INHALING) {
+            if (this.ticksInAir == 0 && this.entity.getPose() == CROUCHING) {
                 BlockPos pos = this.entity.getJumpPos();
                 Vec3d vec3d = TowerMimicJumpGoal.getJumpingVelocity(this.entity, this.entity.getRandom(), Vec3d.ofBottomCenter(pos)).orElse(null);
                 if (vec3d == null) {
@@ -945,7 +1032,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
 
         @Override
         public void stop() {
-            if (this.entity.getPose() == EntityPose.LONG_JUMPING || this.entity.getPose() == INHALING) {
+            if (this.entity.getPose() == EntityPose.LONG_JUMPING || this.entity.getPose() == CROUCHING) {
                 this.entity.setPose(EntityPose.STANDING);
             }
             this.ticksInAir = 10;

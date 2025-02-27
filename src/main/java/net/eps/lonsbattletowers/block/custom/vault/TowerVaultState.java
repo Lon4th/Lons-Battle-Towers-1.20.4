@@ -3,6 +3,7 @@ package net.eps.lonsbattletowers.block.custom.vault;
 import net.eps.lonsbattletowers.block.entity.TowerVaultBlockEntity;
 import net.eps.lonsbattletowers.entity.ModEntities;
 import net.eps.lonsbattletowers.entity.custom.TowerMimicEntity;
+import net.eps.lonsbattletowers.sounds.ModSounds;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
@@ -43,18 +44,18 @@ public enum TowerVaultState implements StringIdentifiable {
     UNLOCKING("unlocking", TowerVaultState.Light.LIT) {
         @Override
         protected void onChangedTo(ServerWorld world, BlockPos pos, TowerVaultConfig config, TowerVaultSharedData sharedData) {
-            world.playSound(null, pos, /*SoundEvents.BLOCK_VAULT_INSERT_ITEM*/ SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS);
+            world.playSound(null, pos, ModSounds.VAULT_INSERT_ITEM, SoundCategory.BLOCKS);
         }
     },
     EJECTING("ejecting", TowerVaultState.Light.LIT) {
         @Override
         protected void onChangedTo(ServerWorld world, BlockPos pos, TowerVaultConfig config, TowerVaultSharedData sharedData) {
-            world.playSound(null, pos, /*SoundEvents.BLOCK_VAULT_OPEN_SHUTTER*/ SoundEvents.BLOCK_ANVIL_BREAK, SoundCategory.BLOCKS);
+            world.playSound(null, pos, ModSounds.VAULT_OPEN_SHUTTER, SoundCategory.BLOCKS);
         }
 
         @Override
         protected void onChangedFrom(ServerWorld world, BlockPos pos, TowerVaultConfig config, TowerVaultSharedData sharedData) {
-            world.playSound(null, pos, /*SoundEvents.BLOCK_VAULT_CLOSE_SHUTTER*/ SoundEvents.BLOCK_ANVIL_DESTROY, SoundCategory.BLOCKS);
+            world.playSound(null, pos, ModSounds.VAULT_CLOSE_SHUTTER, SoundCategory.BLOCKS);
         }
     };
 
@@ -120,7 +121,7 @@ public enum TowerVaultState implements StringIdentifiable {
     private void ejectItem(ServerWorld world, BlockPos pos, ItemStack stack, float pitchModifier) {
         ItemDispenserBehavior.spawnItem(world, stack, 2, Direction.UP, Vec3d.ofBottomCenter(pos).offset(Direction.UP, 1.2));
         world.syncWorldEvent(/*WorldEvents.VAULT_EJECTS_ITEM*/ WorldEvents.DISPENSER_DISPENSES, pos, 0);
-        world.playSound(null, pos, /*SoundEvents.BLOCK_VAULT_EJECT_ITEM*/ SoundEvents.BLOCK_DISPENSER_DISPENSE, SoundCategory.BLOCKS, 1.0F, 0.8F + 0.4F * pitchModifier);
+        world.playSound(null, pos, ModSounds.VAULT_EJECT_ITEM, SoundCategory.BLOCKS, 1.0F, 0.8F + 0.4F * pitchModifier);
     }
 
     static enum Light {

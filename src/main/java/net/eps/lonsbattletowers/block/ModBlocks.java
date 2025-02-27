@@ -26,7 +26,7 @@ public class ModBlocks {
 
     /* New Blocks */
 
-    public static final Block TOWER_SPAWNER = registerBlockWithItem("tower_spawner", new TowerSpawnerBlock(AbstractBlock.Settings.create().mapColor(MapColor.STONE_GRAY).instrument(Instrument.BASEDRUM).strength(6f).requiresTool().strength(0.75f, 1200.0f).luminance(state -> state.get(TowerSpawnerBlock.TOWER_SPAWNER_STATE).getLuminance()).sounds(/* BlockSoundGroup.TRIAL_SPAWNER */ BlockSoundGroup.METAL).blockVision(Blocks::never).nonOpaque()));
+    public static final Block TOWER_SPAWNER = registerBlockWithItem("tower_spawner", new TowerSpawnerBlock(AbstractBlock.Settings.create().mapColor(MapColor.STONE_GRAY).instrument(Instrument.BASEDRUM).strength(5f).requiresTool().strength(0.75f, 1200.0f).luminance(state -> state.get(TowerSpawnerBlock.TOWER_SPAWNER_STATE).getLuminance()).sounds(/* BlockSoundGroup.TRIAL_SPAWNER */ BlockSoundGroup.METAL).blockVision(Blocks::never).nonOpaque()));
     public static final Block TOWER_VAULT = registerBlockWithItem("tower_vault", new TowerVaultBlock(AbstractBlock.Settings.create().mapColor(MapColor.STONE_GRAY).instrument(Instrument.BASEDRUM).nonOpaque().sounds(/* BlockSoundGroup.TRIAL_SPAWNER */ BlockSoundGroup.METAL)
             .luminance(state -> (state.get(TowerVaultBlock.TOWER_VAULT_STATE)).getLuminance()).strength(50.0F).blockVision(Blocks::never)));
 

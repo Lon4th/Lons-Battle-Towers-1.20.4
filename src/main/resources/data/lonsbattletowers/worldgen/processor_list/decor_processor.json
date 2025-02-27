@@ -1,0 +1,7 @@
+{
+  "processors": [
+    {
+      "processor_type": "lonsbattletowers:tower_special_blocks_setup_processor"
+    }
+  ]
+}

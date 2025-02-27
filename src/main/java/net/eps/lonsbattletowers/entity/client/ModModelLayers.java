@@ -6,4 +6,5 @@ import net.minecraft.util.Identifier;
 
 public class ModModelLayers {
     public static final EntityModelLayer TOWER_MIMIC = new EntityModelLayer(new Identifier(LonsBattleTowers.MOD_ID, "tower_mimic"), "main");
+    public static final EntityModelLayer TOWER_GOLEM = new EntityModelLayer(new Identifier(LonsBattleTowers.MOD_ID, "temp_texture"), "main");
 }

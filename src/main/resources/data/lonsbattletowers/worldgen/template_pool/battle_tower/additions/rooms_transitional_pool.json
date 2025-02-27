@@ -1,0 +1,15 @@
+{
+  "name": "lonsbattletowers:battle_tower/additions/rooms_transitional_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/tower_addition_room_transitional",
+        "processors": "lonsbattletowers:tower_addition_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "type": "chest",
+  "pools": [
+    {
+      "rolls": 20,
+      "entries": [
+        {
+          "type": "item",
+          "functions": [
+            {
+              "function": "lonsbattletowers:battle_tower_reward_gen"
+            }
+          ],
+          "name": "minecraft:stick",
+          "weight": 10
+        }
+      ]
+    }
+  ]
+}

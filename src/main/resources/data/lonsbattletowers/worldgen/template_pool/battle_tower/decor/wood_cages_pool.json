@@ -1,0 +1,42 @@
+{
+  "name": "lonsbattletowers:battle_tower/decor/decor_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 50,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/decor/wooden_cage_1",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 50,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/decor/wooden_cage_2",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 50,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/decor/wooden_cage_3",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 50,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/decor/wooden_cage_4",
+        "processors": "lonsbattletowers:decor_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "lonsbattletowers:battle_tower/additions/rooms_transitional_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 7,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/tower_addition_room_end",
+        "processors": "lonsbattletowers:tower_addition_roof_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "lonsbattletowers:battle_tower/additions/tower_addition_room_end_castle",
+        "processors": "lonsbattletowers:tower_addition_roof_age_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

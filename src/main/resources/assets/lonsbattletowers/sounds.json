@@ -1,0 +1,158 @@
+{
+  "mimic_ambient": {
+    "subtitle": "subtitle.lonsbattletowers.mimic_ambient",
+    "sounds": [
+      "lonsbattletowers:mimic/ambient/mimic_ambient_1",
+      "lonsbattletowers:mimic/ambient/mimic_ambient_2"
+    ]
+  },
+
+  "mimic_shoot_shoot": {
+    "subtitle": "subtitle.lonsbattletowers.mimic_shoot",
+    "sounds": [
+      "lonsbattletowers:mimic/shoot/shoot/mimic_shoot_shoot"
+    ]
+  },
+  "mimic_shoot_creak": {
+    "sounds": [
+      "lonsbattletowers:mimic/shoot/creak/mimic_shoot_creak"
+    ]
+  },
+
+  "mimic_bite_blade": {
+    "subtitle": "subtitle.lonsbattletowers.mimic_bite",
+    "sounds": [
+      "lonsbattletowers:mimic/bite/blade/mimic_bite_blade"
+    ]
+  },
+  "mimic_bite_breathe": {
+    "sounds": [
+      "lonsbattletowers:mimic/bite/breathe/mimic_bite_breathe"
+    ]
+  },
+  "mimic_bite_shake": {
+    "sounds": [
+      "lonsbattletowers:mimic/bite/shake/mimic_bite_shake"
+    ]
+  },
+  "mimic_bite_shake_metallic": {
+    "sounds": [
+      "lonsbattletowers:mimic/bite/shake/metallic/mimic_bite_shake_metallic"
+    ]
+  },
+
+  "mimic_spawn_hit": {
+    "subtitle": "subtitle.lonsbattletowers.mimic_spawn",
+    "sounds": [
+      "lonsbattletowers:mimic/spawn/hit/mimic_spawn_hit"
+    ]
+  },
+  "mimic_spawn_break": {
+    "sounds": [
+      "lonsbattletowers:mimic/spawn/break/mimic_spawn_break"
+    ]
+  },
+  "mimic_spawn_scream": {
+    "sounds": [
+      "lonsbattletowers:mimic/spawn/scream/mimic_spawn_scream"
+    ]
+  },
+  "mimic_death_break": {
+    "subtitle": "subtitle.lonsbattletowers.mimic_death",
+    "sounds": [
+      "lonsbattletowers:mimic/death/break/mimic_death_break"
+    ]
+  },
+  "mimic_death_fall": {
+    "sounds": [
+      "lonsbattletowers:mimic/death/fall/mimic_death_fall"
+    ]
+  },
+  "mimic_death_shake": {
+    "sounds": [
+      "lonsbattletowers:mimic/death/shake/mimic_death_shake"
+    ]
+  },
+  "mimic_hurt_hit": {
+    "subtitle": "subtitle.lonsbattletowers.mimic_hurt",
+    "sounds": [
+      "lonsbattletowers:mimic/hurt/hit/mimic_hurt_hit",
+      "lonsbattletowers:mimic/hurt/hit/mimic_hurt_hit_metallic"
+    ]
+  },
+  "mimic_hurt_breathe": {
+    "sounds": [
+      "lonsbattletowers:mimic/hurt/breathe/mimic_hurt_breathe"
+    ]
+  },
+  "mimic_hurt_shake": {
+    "sounds": [
+      "lonsbattletowers:mimic/hurt/shake/mimic_hurt_shake"
+    ]
+  },
+  "mimic_step": {
+    "subtitle": "subtitle.lonsbattletowers.mimic_step",
+    "sounds": [
+      "lonsbattletowers:mimic_step_0"
+    ]
+  },
+
+  "vault_activate": {
+    "subtitle": "subtitle.lonsbattletowers.vault_activate",
+    "sounds": [
+      "lonsbattletowers:tower_vault/activate"
+    ]
+  },
+  "vault_deactivate": {
+    "subtitle": "subtitle.lonsbattletowers.vault_deactivate",
+    "sounds": [
+      "lonsbattletowers:tower_vault/deactivate"
+    ]
+  },
+  "vault_ambient": {
+    "subtitle": "subtitle.lonsbattletowers.vault_ambient",
+    "sounds": [
+      "lonsbattletowers:tower_vault/ambient1",
+      "lonsbattletowers:tower_vault/ambient2",
+      "lonsbattletowers:tower_vault/ambient3"
+    ]
+  },
+  "vault_insert_fail": {
+    "subtitle": "subtitle.lonsbattletowers.vault_insert_fail",
+    "sounds": [
+      "lonsbattletowers:tower_vault/insert_fail"
+    ]
+  },
+  "vault_reject_rewarded_player": {
+    "subtitle": "subtitle.lonsbattletowers.vault_reject_rewarded_player",
+    "sounds": [
+      "lonsbattletowers:tower_vault/reject_rewarded_player"
+    ]
+  },
+  "vault_insert": {
+    "subtitle": "subtitle.lonsbattletowers.vault_insert",
+    "sounds": [
+      "lonsbattletowers:tower_vault/insert"
+    ]
+  },
+  "vault_open_shutter": {
+    "subtitle": "subtitle.lonsbattletowers.vault_open_shutter",
+    "sounds": [
+      "lonsbattletowers:tower_vault/open_shutter"
+    ]
+  },
+  "vault_close_shutter": {
+    "subtitle": "subtitle.lonsbattletowers.vault_close_shutter",
+    "sounds": [
+      "lonsbattletowers:tower_vault/close_shutter"
+    ]
+  },
+  "vault_eject": {
+    "subtitle": "subtitle.lonsbattletowers.vault_eject",
+    "sounds": [
+      "lonsbattletowers:tower_vault/eject1",
+      "lonsbattletowers:tower_vault/eject2",
+      "lonsbattletowers:tower_vault/eject3"
+    ]
+  }
+}

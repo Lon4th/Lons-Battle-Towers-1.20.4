@@ -1,0 +1,28 @@
+{
+  "type": "lonsbattletowers:battle_tower_type",
+
+  "start_pool": "lonsbattletowers:battle_tower/start_pool",
+  "finish_pool": "lonsbattletowers:battle_tower/finish_pool",
+
+  "floors_pool": "lonsbattletowers:battle_tower/floors/floors_pool",
+  "floor_bases_pool": "lonsbattletowers:battle_tower/floors/floor_bases_pool",
+
+  "bridge_pool": "lonsbattletowers:battle_tower/additions/bridge_pool",
+  "tower_pool_bottom": "lonsbattletowers:battle_tower/additions/rooms_bottom_pool",
+  "tower_pool_transitional": "lonsbattletowers:battle_tower/additions/rooms_transitional_pool",
+  "tower_pool_end": "lonsbattletowers:battle_tower/additions/rooms_end_pool",
+
+  "start_jigsaw_name": "lonsbattletowers:tower_entrance",
+
+  "size": 40,
+  "max_distance_from_center": 256,
+  "start_height": {
+    "absolute": -1
+  },
+  "project_start_to_heightmap": "WORLD_SURFACE_WG",
+  "use_expansion_hack": false,
+
+  "biomes": "#lonsbattletowers:has_structure/battle_tower",
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}

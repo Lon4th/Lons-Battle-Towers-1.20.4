@@ -1,0 +1,10 @@
+{
+  "processors": [
+    {
+      "processor_type": "lonsbattletowers:tower_age_processor",
+      "mossiness": 0.4,
+      "crackness": 0.2,
+      "stairRemove": true
+    }
+  ]
+}

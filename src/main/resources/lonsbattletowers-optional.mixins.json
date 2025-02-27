@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "net.eps.lonsbattletowers.mixins.optional",
+  "parent": "lonsbattletowers.mixins.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "LootableContainerBlockEntityAccessor",
+    "LootrChestBlockEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
