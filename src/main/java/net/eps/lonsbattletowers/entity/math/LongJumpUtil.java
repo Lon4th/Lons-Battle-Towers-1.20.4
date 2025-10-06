@@ -1,5 +1,6 @@
 package net.eps.lonsbattletowers.entity.math;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.mob.MobEntity;
@@ -12,7 +13,7 @@ public class LongJumpUtil {
     public LongJumpUtil() {
     }
 
-    public static Optional<Vec3d> getJumpingVelocity(MobEntity entity, Vec3d jumpTarget, float maxVelocity, int angle, boolean requireClearPath) {
+    public static Optional<Vec3d> getJumpingVelocity(Entity entity, Vec3d jumpTarget, float maxVelocity, int angle, boolean requireClearPath) {
         Vec3d vec3d = entity.getPos();
         Vec3d vec3d2 = (new Vec3d(jumpTarget.x - vec3d.x, 0.0, jumpTarget.z - vec3d.z)).normalize().multiply(0.5);
         Vec3d vec3d3 = jumpTarget.subtract(vec3d2);
@@ -64,7 +65,7 @@ public class LongJumpUtil {
         }
     }
 
-    private static boolean isPathClear(MobEntity entity, EntityDimensions dimensions, Vec3d prevPos, Vec3d nextPos) {
+    private static boolean isPathClear(Entity entity, EntityDimensions dimensions, Vec3d prevPos, Vec3d nextPos) {
         Vec3d vec3d = nextPos.subtract(prevPos);
         double d = (double)Math.min(dimensions.width, dimensions.height);
         int i = MathHelper.ceil(vec3d.length() / d);

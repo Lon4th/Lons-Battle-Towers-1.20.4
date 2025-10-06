@@ -5,6 +5,7 @@ import net.eps.lonsbattletowers.block.entity.ModBlockEntities;
 import net.eps.lonsbattletowers.entity.ModEntities;
 import net.eps.lonsbattletowers.entity.custom.golem.TowerGolemEntity;
 import net.eps.lonsbattletowers.entity.custom.TowerMimicEntity;
+import net.eps.lonsbattletowers.entity.custom.golem.TowerGolemPart;
 import net.eps.lonsbattletowers.item.ModItems;
 import net.eps.lonsbattletowers.loot.ModLootContextParameters;
 import net.eps.lonsbattletowers.loot.ModLootContextTypes;
@@ -47,5 +48,7 @@ public class LonsBattleTowers implements ModInitializer {
 
 		FabricDefaultAttributeRegistry.register(ModEntities.TOWER_MIMIC, TowerMimicEntity.createTowerMimicAttributes());
 		FabricDefaultAttributeRegistry.register(ModEntities.TOWER_GOLEM, TowerGolemEntity.createTowerGolemAttributes());
+		FabricDefaultAttributeRegistry.register(ModEntities.TOWER_GOLEM_ARM_PART, TowerGolemEntity.createTowerGolemAttributes());
+		//FabricDefaultAttributeRegistry.register(ModEntities.TOWER_GOLEM_BODY_PART, TowerGolemPart.createTowerGolemAttributes());
 	}
 }

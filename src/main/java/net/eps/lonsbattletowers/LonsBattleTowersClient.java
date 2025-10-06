@@ -2,6 +2,8 @@ package net.eps.lonsbattletowers;
 
 import net.eps.lonsbattletowers.entity.ModEntities;
 import net.eps.lonsbattletowers.entity.client.ModModelLayers;
+import net.eps.lonsbattletowers.entity.client.golem.TowerGolemArmModel;
+import net.eps.lonsbattletowers.entity.client.golem.TowerGolemArmRenderer;
 import net.eps.lonsbattletowers.entity.client.golem.TowerGolemModel;
 import net.eps.lonsbattletowers.entity.client.golem.TowerGolemRenderer;
 import net.eps.lonsbattletowers.entity.client.mimic.TowerMimicModel;
@@ -32,5 +34,7 @@ public class LonsBattleTowersClient implements ClientModInitializer {
 
         EntityRendererRegistry.register(ModEntities.TOWER_GOLEM, TowerGolemRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(ModModelLayers.TOWER_GOLEM, TowerGolemModel::getTexturedModelData);
+        EntityRendererRegistry.register(ModEntities.TOWER_GOLEM_ARM_PART, TowerGolemArmRenderer::new);
+        EntityModelLayerRegistry.registerModelLayer(ModModelLayers.TOWER_GOLEM_ARM, TowerGolemArmModel::getTexturedModelData);
     }
 }

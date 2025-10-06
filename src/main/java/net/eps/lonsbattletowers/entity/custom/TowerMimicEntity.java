@@ -23,6 +23,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.*;
@@ -117,7 +118,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
 
 
     private final TowerMimicShootGoal shootGoal = new TowerMimicShootGoal(this, 1.0, 100, 5);
-    private final TowerMimicAttackGoal attackGoal = new TowerMimicAttackGoal(this, 1.0, true);
+    private final TowerMimicAttackGoal attackGoal = new TowerMimicAttackGoal(this, 0.5, true);
 
     public TowerMimicEntity(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
@@ -231,6 +232,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
 
         if (this.getTarget() == null) {
             this.targetSelector.add(3, new ActiveTargetGoal<PlayerEntity>(this, PlayerEntity.class, true));
+            this.targetSelector.add(3, new ActiveTargetGoal<ArmorStandEntity>(this, ArmorStandEntity.class, true)); ///////////////
             this.targetSelector.add(3, new ActiveTargetGoal<IronGolemEntity>(this, IronGolemEntity.class, true));
         }
         this.targetSelector.add(2, new RevengeGoal(this, TowerMimicEntity.class).setGroupRevenge(new Class[0]));
@@ -618,10 +620,6 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 1);
     }
 
-    /*protected SoundEvent getAmbientSound() {
-        return SoundEvents.ENTITY_ZOMBIE_AMBIENT;
-    }*/
-
     protected SoundEvent getHurtSound(DamageSource source) {
         //return ModSounds.MIMIC_HURT;
         return null;
@@ -662,9 +660,6 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
     protected void playStepSound(BlockPos pos, BlockState state) {
         this.playSound(this.getStepSound(), (float) random.nextBetween(0, 25) / 100, (float) random.nextBetweenExclusive(0, 20) / 10);
         this.playSound(SoundEvents.ENTITY_IRON_GOLEM_STEP, 0.25F, 1.2F);
-
-        //BlockSoundGroup blockSoundGroup = state.getSoundGroup();
-        //this.playSound(blockSoundGroup.getStepSound(), blockSoundGroup.getVolume() * 0.15F, blockSoundGroup.getPitch());
     }
 
     protected void playDeathSound(DamageSource source) {
@@ -675,10 +670,6 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
         this.playSound(deathBreak, 0.8f, 1f);
         this.playSound(deathFall, 0.5f, 1f);
         this.playSound(deathShake, 0.5f, 1f);
-
-        //this.playSound(hurtBreathe, 0.2f, (float) random.nextBetweenExclusive(0, 15) / 10);
-        //this.playSound(hurtHit, 0.5f, 1f);
-        //this.playSound(hurtShake, 0.5f, 1f);
     }
 
     /* Goals & Attacks */
@@ -1067,7 +1058,7 @@ public class TowerMimicEntity extends HostileEntity implements RangedAttackMob {
             RaycastContext raycastContext = new RaycastContext(pos, pos.offset(Direction.DOWN, 10.0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, mimic);
             BlockHitResult hitResult = mimic.getWorld().raycast(raycastContext);
             if (((HitResult)hitResult).getType() == HitResult.Type.BLOCK) {
-                return BlockPos.ofFloored(hitResult.getPos()).up();
+                return BlockPos.ofFloored(hitResult.getPos());
             }
             RaycastContext raycastContext2 = new RaycastContext(pos, pos.offset(Direction.UP, 10.0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, mimic);
             BlockHitResult hitResult2 = mimic.getWorld().raycast(raycastContext2);
