@@ -124,7 +124,7 @@ public class TowerGolemStepGoal extends Goal {
         double distanceToCenter = Math.sqrt(Math.pow(startPos.x - this.part.getPartsCenterPos().x, 2) + Math.pow(startPos.z - this.part.getPartsCenterPos().z, 2));
 
         this.distance = GolemMath.getDistance(startPos, endPos, this.part.getPartsCenterPos(), this.partDegree, distanceToCenter);
-        if (distanceToCenter >= 5) {
+        if (distanceToCenter >= 5/* && true*/) {
             this.projection = Optional.of(GolemMath.posFromAngle(this.part.getPartsCenterPos(), GolemMath.addDegree(this.partDegree, 90), false));
         }
 

@@ -137,6 +137,7 @@ public class EntityNavigationMixin {
         Vec3d centerPos;
         if (owner.getTarget() != null) {
             centerPos = GolemMath.getPosInFond(owner, owner.getTarget().getPos());
+            yawDegree = (float) ((Math.toDegrees(Math.atan2(centerPos.x - owner.getPos().x, centerPos.z - owner.getPos().z)) % 360) * -1);
         } else {
             centerPos = GolemMath.getPosInFond(owner, yawDegree);
         }

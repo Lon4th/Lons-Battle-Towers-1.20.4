@@ -8,6 +8,7 @@ import java.lang.Math;
 
 import net.minecraft.world.World;
 import org.joml.Vector2d;
+import org.joml.Vector3d;
 
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ public class GolemMath {
     }
 
     public static Vec3d calculateArmPosition(Vec3d startPos, Vec3d endPos, Vec3d centerPos, double time, boolean counterClockwise, double distance, Optional<Vec3d> projectionOptional, World world) {
+        time = GolemMath.interpolate((float) time, 4, 2);
         if (projectionOptional.isPresent()) {
             Vec3d projection = projectionOptional.get();
 
@@ -45,6 +47,7 @@ public class GolemMath {
             /* Setting up Y */
             double height = 2; //Math.max(distance * 0.3, 2);
 
+            //time = GolemMath.interpolate((float) time);
             double y = startPos.y + height * (4 * time * (1 - time));
 
             return vec3d.add(0, y, 0);
@@ -61,6 +64,7 @@ public class GolemMath {
             double angle = startAngle + time * deltaAngle;
 
             double height = endPos.y - startPos.y > 0 ? endPos.y - startPos.y + 1 : 1;
+            //time = GolemMath.interpolate((float) time);
             double y = startPos.y + height * (-4 * Math.pow(time, 2) + 4 * time);
 
             Vec3d vec3d = GolemMath.posFromAngle(centerPos, angle, true).add(0, y, 0);
@@ -69,8 +73,18 @@ public class GolemMath {
         }
     }
 
+    public static float interpolate(float x, int howLongToBegin, int howFastToAccelerate) {
+        x = (float) (x * (Math.PI / howFastToAccelerate));
+        if (x > (Math.PI / howFastToAccelerate)) {
+            x = (float) (Math.PI / howFastToAccelerate);
+        } else if (x < 0) {
+            x = 0;
+        }
+        return (float) Math.pow((0.5f * Math.sin(howFastToAccelerate * x - Math.PI / 2f) + 0.5f), howLongToBegin);
+    }
+
     public static double getDistance(Vec3d startPos, Vec3d endPos, Vec3d centerPos, float armDegree, double distanceToCenter) {
-        if (distanceToCenter < 5) {
+        if (distanceToCenter < 5/* && false*/) {
             return Math.sqrt(Math.pow(endPos.x - startPos.x, 2) + Math.pow(endPos.z - startPos.z, 2));
         } else {
             Vec3d projectedPos = GolemMath.posFromAngle(centerPos, GolemMath.addDegree(armDegree, 90), false);
